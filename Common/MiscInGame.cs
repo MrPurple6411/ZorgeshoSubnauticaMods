@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-#if GAME_SN
+#if SUBNAUTICA
 	using Sprite = Atlas.Sprite;
-#elif GAME_BZ
+#elif BELOWZERO
 	using Sprite = UnityEngine.Sprite;
 #endif
 
@@ -70,44 +70,25 @@ namespace Common
 		public static TechType getHeldToolType() => Inventory.main?.GetHeld()?.GetTechType() ?? TechType.None;
 
 		public static bool isLoadingState =>
-#if GAME_SN
-			uGUI._main?.loading.loadingBackground?.state == true;
-#elif GAME_BZ
-			uGUI._main?.loading.IsLoading == true; // doesn't work well in SN
-#endif
+			uGUI._main?.loading.loadingBackground?.sequence._target == true;
+
 		// use that when needed (Time.time -> PDA.time in BZ)
-		public static float time =>
-#if GAME_SN
-			Time.time;
-#elif GAME_BZ
-			PDA.time;
-#endif
+		public static float time => PDA.time;
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
 			ErrorMessage.main?.messages.Where(m => m.timeEnd - time < 1e3f).forEach(m => m.timeEnd = time - 1f);
 
 		public static GameObject getTarget(float maxDistance)
 		{
-#if GAME_SN
-			Targeting.GetTarget(Player.main.gameObject, maxDistance, out GameObject result, out _, null);
-#elif GAME_BZ
 			Targeting.GetTarget(Player.main.gameObject, maxDistance, out GameObject result, out _);
-#endif
 			return result;
 		}
 
 		public static void setText(this HandReticle hand, string textUse = null, string textUseSubscript = null, string textHand = null, string textHandSubscript = null)
 		{
-#if GAME_SN
-			if (textUse != null)			hand.useText1 = textUse;
-			if (textHand != null)			hand.interactText1 = textHand;
-			if (textUseSubscript != null)	hand.useText2 = textUseSubscript;
-			if (textHandSubscript != null)	hand.interactText2 = textHandSubscript;
-#elif GAME_BZ
 			if (textUse != null)			hand.textUse = textUse;
 			if (textHand != null)			hand.textHand = textHand;
 			if (textUseSubscript != null)	hand.textUseSubscript = textUseSubscript;
 			if (textHandSubscript != null)	hand.textHandSubscript = textHandSubscript;
-#endif
 		}
 
 		// findNearest* methods are for use in non-performance critical code

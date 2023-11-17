@@ -19,26 +19,26 @@
 #endif
 
 			public const bool isGameSN =
-#if GAME_SN
+#if SUBNAUTICA
 				true;
 #else
 				false;
 #endif
 			public const bool isGameSNStable =
-#if GAME_SN && BRANCH_STABLE
+#if SUBNAUTICA && BRANCH_STABLE
 				true;
 #else
 				false;
 #endif
 			public const bool isGameSNExp =
-#if GAME_SN && BRANCH_EXP
+#if SUBNAUTICA && BRANCH_EXP
 				true;
 #else
 				false;
 #endif
 
 			public const bool isGameBZ =
-#if GAME_BZ
+#if BELOWZERO
 				true;
 #else
 				false;

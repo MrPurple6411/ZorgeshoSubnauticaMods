@@ -55,11 +55,7 @@ namespace MiscPatches
 		[Command(combineArgs = true, caseSensitive = true)]
 		public void subtitles(string message)
 		{
-#if GAME_SN
-			Subtitles.main.Add(message);
-#elif GAME_BZ
 			Subtitles.Add(message);
-#endif
 		}
 
 		public void vehiclehealth(float healthPercent)

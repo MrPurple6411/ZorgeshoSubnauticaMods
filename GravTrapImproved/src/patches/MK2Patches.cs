@@ -30,21 +30,21 @@ namespace GravTrapImproved
 		}
 
 		// patching work range
-		[HarmonyPostfix, HarmonyPatch(typeof(Gravsphere), "Start")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Gravsphere), nameof(Gravsphere.Start))]
 		static void patchMaxRadius(Gravsphere __instance)
 		{
 			updateRange(__instance);
 		}
 
 		// patching max count of attracted objects
-		[HarmonyTranspiler, HarmonyPatch(typeof(Gravsphere), "OnTriggerEnter")]
+		[HarmonyTranspiler, HarmonyPatch(typeof(Gravsphere), nameof(Gravsphere.OnTriggerEnter))]
 		static IEnumerable<CodeInstruction> patchObjectMaxCount(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
 			return CIHelper.constToCfgVar<sbyte, GravTrapMK2.Tag>(cins, 12, nameof(Main.config.mk2MaxObjects), ilg);
 		}
 
 		// patching max force applied to attracted objects and max mass for stable grav trap
-		[HarmonyTranspiler, HarmonyPatch(typeof(Gravsphere), "ApplyGravitation")]
+		[HarmonyTranspiler, HarmonyPatch(typeof(Gravsphere), nameof(Gravsphere.ApplyGravitation))]
 		static IEnumerable<CodeInstruction> patchForces(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
 			var list = cins.ToList();
@@ -65,7 +65,7 @@ namespace GravTrapImproved
 		static readonly string gravtrap = nameof(GravTrapMK2).ToLower();
 
 		// using animation from vanilla gravtrap
-		[HarmonyPrefix, HarmonyPatch(typeof(QuickSlots), "SetAnimationState")]
+		[HarmonyPrefix, HarmonyPatch(typeof(QuickSlots), nameof(QuickSlots.SetAnimationState))]
 		static bool patchAnimation(QuickSlots __instance, string toolName)
 		{
 			if (toolName != gravtrap)

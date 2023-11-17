@@ -5,30 +5,28 @@ using Common;
 
 namespace FloatingCargoCrate
 {
-	[HarmonyPatch(typeof(StorageContainer), "OnHandHover")]
+	[HarmonyPatch(typeof(StorageContainer), nameof(StorageContainer.OnHandHover))]
 	static class StorageContainer_OnHandHover_Patch
 	{
 		static void Postfix(StorageContainer __instance)
 		{
 			if (__instance.GetComponentInParent<FloatingCargoCrateControl>()?.needShowBeaconText != true)
 				return;
-#if GAME_SN
-			var textHand = HandReticle.main.interactText1;
-#elif GAME_BZ
+
 			var textHand = HandReticle.main.textHand;
-#endif
+
 			if (textHand != "")
 				HandReticle.main.setText(textHand: textHand + L10n.str(L10n.ids_attachBeaconToCrate).format(uGUI.FormatButton(GameInput.Button.RightHand)));
 		}
 	}
 
-	[HarmonyPatch(typeof(Beacon), "OnPickedUp")]
+	[HarmonyPatch(typeof(Beacon), nameof(Beacon.OnPickedUp))]
 	static class Beacon_OnPickedUp_Patch
 	{
 		static void Prefix(Beacon __instance) => FloatingCargoCrateControl.tryDetachBeacon(__instance);
 	}
 
-	[HarmonyPatch(typeof(Beacon), "Throw")]
+	[HarmonyPatch(typeof(Beacon), nameof(Beacon.Throw))]
 	static class Beacon_Throw_Patch
 	{
 		static void Postfix(Beacon __instance)
@@ -44,7 +42,7 @@ namespace FloatingCargoCrate
 		}
 	}
 
-	[HarmonyPatch(typeof(Builder), "CheckAsSubModule")]
+	[HarmonyPatch(typeof(Builder), nameof(Builder.CheckAsSubModule))]
 	static class Builder_CheckAsSubModule_Patch
 	{
 		static bool Prefix(ref bool __result)

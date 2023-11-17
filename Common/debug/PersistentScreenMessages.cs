@@ -23,10 +23,10 @@ namespace Common
 
 			static readonly FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
 			static readonly PropertyWrapper text =
-				Type.GetType(Mod.Consts.isGameSN? "UnityEngine.UI.Text, UnityEngine.UI": "TMPro.TextMeshProUGUI, Unity.TextMeshPro").property("text").wrap();
+				Type.GetType("TMPro.TextMeshProUGUI, Unity.TextMeshPro").property("text").wrap();
 
 			[HarmonyPrefix]
-			[HarmonyHelper.Patch(typeof(ErrorMessage), "_AddMessage")]
+			[HarmonyHelper.Patch(typeof(ErrorMessage), nameof(ErrorMessage._AddMessage))]
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchOnce)]
 			static bool messagePatch(ErrorMessage __instance, string messageText)
 			{

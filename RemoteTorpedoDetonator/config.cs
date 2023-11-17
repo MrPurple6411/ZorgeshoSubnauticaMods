@@ -10,7 +10,7 @@ namespace RemoteTorpedoDetonator
 		[Field.Range(min: 1f)]
 		[Field.Action(typeof(UpdateOptionalPatches))]
 		public readonly float torpedoSpeed = 10f;
-#if GAME_SN
+#if SUBNAUTICA
 		[Field.Range(min: 0f)]
 		public readonly float torpedoCooldown = 5f;
 #endif

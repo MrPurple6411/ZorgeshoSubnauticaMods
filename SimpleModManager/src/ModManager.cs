@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 
-#if GAME_SN && BRANCH_STABLE
+#if SUBNAUTICA && BRANCH_STABLE
 using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Linq;
 #else

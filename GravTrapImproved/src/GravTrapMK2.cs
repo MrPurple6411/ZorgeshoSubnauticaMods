@@ -52,10 +52,10 @@ namespace GravTrapImproved
 			TechType = register(L10n.ids_GravTrapMK2, L10n.ids_GravTrapMK2Description, TechType.Gravsphere);
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
-#if GAME_SN
+#if SUBNAUTICA
 			CraftNodesCustomOrder.addNode(CraftTree.Type.Workbench, "GravTrap", L10n.ids_GravTrapMenu, "", "FinsMenu", TechType.Gravsphere);
 			addCraftingNodeTo(CraftTree.Type.Workbench, "GravTrap", TechType.None);
-#elif GAME_BZ
+#elif BELOWZERO
 			addCraftingNodeTo(CraftTree.Type.Workbench, "");
 #endif
 			setItemSize(2, 2);

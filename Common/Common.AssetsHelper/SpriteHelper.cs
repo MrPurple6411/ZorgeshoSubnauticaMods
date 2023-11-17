@@ -1,6 +1,6 @@
-﻿#if GAME_SN
+﻿#if SUBNAUTICA
 	using Sprite = Atlas.Sprite;
-#elif GAME_BZ
+#elif BELOWZERO
 	using Sprite = UnityEngine.Sprite;
 #endif
 
@@ -11,9 +11,9 @@ namespace Common
 		public static Sprite getSprite(string spriteID)
 		{
 			UnityEngine.Sprite sprite = AssetsHelper.loadSprite(spriteID);
-#if GAME_SN
+#if SUBNAUTICA
 			return sprite == null? null: new Sprite(sprite);
-#elif GAME_BZ
+#elif BELOWZERO
 			return sprite;
 #endif
 		}

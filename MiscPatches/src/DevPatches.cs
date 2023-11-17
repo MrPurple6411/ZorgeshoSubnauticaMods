@@ -13,8 +13,9 @@ using Common;
 using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
+using System.Linq;
 
-#if GAME_BZ || BRANCH_EXP
+#if BELOWZERO || BRANCH_EXP
 using System.Linq;
 #endif
 
@@ -30,7 +31,7 @@ namespace MiscPatches
 
 		static bool Prefix(CellManager __instance, IEntitySlot slot, ref EntitySlot.Filler __result)
 		{
-			if (__instance.spawner == null || __instance.streamer.debugDisableSlotEnts)
+			if (__instance.spawner == null)
 			{
 				__result = default;
 				return false;
@@ -82,13 +83,13 @@ namespace MiscPatches
 	{
 		const float scanRange = 500f;
 		static bool prepare() => Main.config.dbg.scannerRoomCheat;
-#if GAME_SN
+#if SUBNAUTICA
 		[HarmonyPostfix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
 		static void MRF_GetScanRange_Postfix(ref float __result) => __result = scanRange;
 
 		[HarmonyPostfix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
 		static void MRF_GetScanInterval_Postfix(ref float __result) => __result = 0f;
-#elif GAME_BZ
+#elif BELOWZERO
 		[HarmonyTranspiler, HarmonyPatch(typeof(MapRoomFunctionality), "UpdateScanRangeAndInterval")]
 		static IEnumerable<CodeInstruction> MRF_UpdateScanRangeAndInterval_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
@@ -119,7 +120,7 @@ namespace MiscPatches
 			static IEnumerator _startGame()
 			{
 				Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
-#if BRANCH_STABLE && GAME_SN
+#if BRANCH_STABLE && SUBNAUTICA
 				yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
 #else
 				yield return AddressablesUtility.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
@@ -130,7 +131,7 @@ namespace MiscPatches
 					DevConsole.SendConsoleCommand(cmd);
 			}
 		}
-#if GAME_SN
+#if SUBNAUTICA
 		[HarmonyPrefix, HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
 		static bool LightmappedPrefabs_Awake_Prefix(LightmappedPrefabs __instance)
 		{
@@ -148,7 +149,7 @@ namespace MiscPatches
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(PlayerWorldArrows), "ArrowUpdate")]
 		[HarmonyPatch(typeof(TemperatureDamage), "OnCollisionStay")]
-#if GAME_SN
+#if SUBNAUTICA
 		[HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
 #endif
 		static bool methodDisabler() => false;
@@ -162,9 +163,9 @@ namespace MiscPatches
 	static class FreezeTime_Begin_Patch
 	{
 		static bool Prepare() => !Main.config.dbg.ingameMenuPause;
-#if GAME_SN
+#if SUBNAUTICA
 		static bool Prefix(string userId) => userId != "IngameMenu";
-#elif GAME_BZ
+#elif BELOWZERO
 		static bool Prefix(UWE.FreezeTime.Id id) => id != UWE.FreezeTime.Id.IngameMenu;
 #endif
 	}
@@ -195,22 +196,14 @@ namespace MiscPatches
 			return false;
 		}
 
+		[HarmonyPatch(typeof(GameAnalytics), nameof(GameAnalytics.Send), new Type[] { typeof(GameAnalytics.EventInfo), typeof(bool), typeof(string) })]
 		[HarmonyPrefix]
-#if GAME_SN
-		[HarmonyPatch(typeof(GameAnalytics), "Send", typeof(GameAnalytics.EventInfo), typeof(string))]
-#elif GAME_BZ
-		[HarmonyPatch(typeof(GameAnalytics), "Send", typeof(GameAnalytics.EventInfo), typeof(bool), typeof(string))]
-#endif
 		static bool GameAnalytics_Send_Prefix() => false;
 
-#if GAME_SN && BRANCH_STABLE
-		[HarmonyPostfix, HarmonyPatch(typeof(MonitorLauncher), "Awake")] // fix for exception at startup
-		static void MonitorLauncher_Awake_Prefix(MonitorLauncher __instance) => Object.Destroy(__instance);
-#endif
 
-#if GAME_SN && BRANCH_EXP // fix for exception in exp branch because SentrySDK is deleted by QMM
+#if SUBNAUTICA 
 		[HarmonyTranspiler]
-		[HarmonyHelper.Patch(typeof(SystemsSpawner), "SetupSingleton")]
+		[HarmonyHelper.Patch(typeof(SystemsSpawner), nameof(SystemsSpawner.SetupSingleton))]
 		[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
 		static IEnumerable<CodeInstruction> SetupSingleton_Transpiler(IEnumerable<CodeInstruction> cins)
 		{

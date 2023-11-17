@@ -12,9 +12,9 @@ namespace MiscObjects
 		public override void patch()
 		{
 			register("Big cargo box", "Cargo box for outside.", SpriteHelper.getSprite(nameof(CargoBox)));
-#if GAME_SN
+#if SUBNAUTICA
 			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther, TechType.FarmingTray);
-#elif GAME_BZ
+#elif BELOWZERO
 			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorModule, TechType.FarmingTray);
 #endif
 			unlockOnStart();
@@ -43,9 +43,7 @@ namespace MiscObjects
 
 			Utils.addStorageToPrefab(prefab, prefabs[1]);
 			PrefabUtils.initStorage(prefab, 8, 8, L10n.str(L10n.ids_OpenBox), L10n.str(L10n.ids_BoxInv));
-#if GAME_SN
-			prefab.GetComponent<StorageContainer>().modelSizeRadius *= 3f;
-#endif
+
 			return prefab;
 		}
 	}

@@ -17,10 +17,10 @@ namespace RemoteTorpedoDetonator
 		public override void patch()
 		{
 			TechType = register(L10n.ids_detonatorName, L10n.ids_detonatorDesc);
-#if GAME_SN
+#if SUBNAUTICA
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.VehicleStorageModule);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "CommonModules", TechType.VehicleStorageModule);
-#elif GAME_BZ
+#elif BELOWZERO
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitThermalReactorModule);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules", TechType.ExosuitThermalReactorModule);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.ExosuitThermalReactorModule);

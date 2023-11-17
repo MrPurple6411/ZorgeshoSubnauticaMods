@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
+using Nautilus.Options;
+using Nautilus.Handlers;
 
 namespace Common.Configuration
 {
@@ -50,11 +50,7 @@ namespace Common.Configuration
 
 		Options(): base(optionsName)
 		{
-			ToggleChanged  += (object sender, ToggleChangedEventArgs e)  => eventHandler(e.Id, e);
-			SliderChanged  += (object sender, SliderChangedEventArgs e)  => eventHandler(e.Id, e);
-			ChoiceChanged  += (object sender, ChoiceChangedEventArgs e)  => eventHandler(e.Id, e);
-			KeybindChanged += (object sender, KeybindChangedEventArgs e) => eventHandler(e.Id, e);
-
+			OnChanged += (object sender, OptionEventArgs e)  => eventHandler(e.Id, e);
 			GameObjectCreated += (object sender, GameObjectCreatedEventArgs e) => eventHandler(e.Id, e);
 		}
 
@@ -66,17 +62,20 @@ namespace Common.Configuration
 					return;
 
 				if (e is GameObjectCreatedEventArgs)
-					target.onGameObjectChange((e as GameObjectCreatedEventArgs).GameObject);
+					target.onGameObjectChange((e as GameObjectCreatedEventArgs).Value);
 				else
 					target.onValueChange(e);
 			}
 			catch (Exception ex) { Log.msg(ex); }
 		}
 
-		public override void BuildModOptions()
+		public override void BuildModOptions(uGUI_TabbedControlsPanel panel, int modsTabIndex, IReadOnlyCollection<OptionItem> options)
 		{
+			if (modOptions.Count != Options.Count)
+				modOptions.ForEach(o => o.addOption(this));
+
 			updatePanelInfo();
-			modOptions.ForEach(o => o.addOption(this));
+			base.BuildModOptions(panel, modsTabIndex, Options);
 		}
 
 		void updatePanelInfo()

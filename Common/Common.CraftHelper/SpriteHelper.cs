@@ -1,6 +1,6 @@
-﻿#if GAME_SN
+﻿#if SUBNAUTICA
 	using Sprite = Atlas.Sprite;
-#elif GAME_BZ
+#elif BELOWZERO
 	using Sprite = UnityEngine.Sprite;
 #endif
 

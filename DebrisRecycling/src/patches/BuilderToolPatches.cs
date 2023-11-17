@@ -5,14 +5,14 @@ using Common;
 
 namespace DebrisRecycling
 {
-	[HarmonyPatch(typeof(BuilderTool), "Construct")]
+	[HarmonyPatch(typeof(BuilderTool), nameof(BuilderTool.Construct))]
 	static class BuilderTool_Construct_Patch
 	{
 		// don't allow construct debris back
 		static bool Prefix(Constructable c, bool state) => !(state && c.gameObject.GetComponent<DebrisDeconstructable>());
 	}
 
-	[HarmonyPatch(typeof(BuilderTool), "OnHover", typeof(Constructable))]
+	[HarmonyPatch(typeof(BuilderTool), nameof(BuilderTool.OnHover), typeof(Constructable))]
 	static class BuilderTool_OnHover_Patch
 	{
 		static bool Prefix(BuilderTool __instance, Constructable constructable)
@@ -22,7 +22,7 @@ namespace DebrisRecycling
 
 			HandReticle hand = HandReticle.main;
 			string text = L10n.str("ids_salvageableDebris") + (Mod.Consts.isDevBuild? $" ({constructable.gameObject.name})": "");
-			hand.SetInteractText(text, __instance.deconstructText, false, false, HandReticle.Hand.None);
+			hand.SetText(HandReticle.TextType.Use, text, false, GameInput.Button.Deconstruct);
 
 			if (!constructable.constructed)
 			{
@@ -34,7 +34,7 @@ namespace DebrisRecycling
 		}
 	}
 
-	[HarmonyPatch(typeof(BuilderTool), "HandleInput")]
+	[HarmonyPatch(typeof(BuilderTool), nameof(BuilderTool.HandleInput))]
 	static class BuilderTool_HandleInput_Patch
 	{
 		static void Prefix(BuilderTool __instance)

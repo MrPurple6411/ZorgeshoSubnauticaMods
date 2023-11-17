@@ -236,7 +236,7 @@ namespace CustomHotkeys
 		}
 
 
-		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), "Initialize")]
+		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), nameof(GameInput.Initialize))]
 		static void setInputIndexes() => hotkeys?.ForEach(hk => hk.key = hk.key); // reassign keys to update input indexes
 
 		static List<Hotkey> hotkeys;

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-#if GAME_SN
+#if SUBNAUTICA
 using System.Collections.Generic;
 using HarmonyLib;
 using Common.Harmony;
@@ -16,7 +16,7 @@ using System.Linq;
 
 using Common;
 
-#if GAME_BZ
+#if BELOWZERO
 using System.Collections.Generic;
 #endif
 #endif
@@ -89,33 +89,23 @@ namespace UITweaks.StorageTweaks
 
 		public static bool isAllowedToPickUpNonEmpty(this PickupableStorage storage)
 		{
-#if GAME_SN
+#if SUBNAUTICA
 			return false;
-#elif GAME_BZ
+#elif BELOWZERO
 			return storage.allowPickupWhenNonEmpty;
 #endif
 		}
 
 		public static int getItemSize(TechType techType)
 		{
-#if GAME_SN
+#if SUBNAUTICA
 			var size = CraftData.GetItemSize(techType);
-#elif GAME_BZ
+#elif BELOWZERO
 			var size = TechData.GetItemSize(techType);
 #endif
 			return size.x * size.y;
 		}
 
-#if GAME_SN
-		public static int getLineCount(this UnityEngine.UI.Text text) => text.cachedTextGenerator.lineCount;
-		public static int getFirstCharIndexAtLine(this UnityEngine.UI.Text text, int line) => text.cachedTextGenerator.GetLinesArray()[line].startCharIdx;
-
-		public static void forceRedraw(this UnityEngine.UI.Text text, string str)
-		{
-			var rt = text.transform as RectTransform;
-			text.cachedTextGenerator.Populate(str, text.GetGenerationSettings(rt.rect.size));
-		}
-#elif GAME_BZ
 		public static int getLineCount(this TMPro.TMP_Text text) => text.textInfo.lineCount;
 		public static int getFirstCharIndexAtLine(this TMPro.TMP_Text text, int line) => text.textInfo.lineInfo[line].firstCharacterIndex;
 
@@ -124,9 +114,8 @@ namespace UITweaks.StorageTweaks
 			text.text = str; // this actually sets text from the inputField, not 'str' for some reason
 			text.ForceMeshUpdate();
 		}
-#endif
 
-#if GAME_SN // code is copied from BZ with some modifications
+#if SUBNAUTICA // code is copied from BZ with some modifications
 		static readonly Dictionary<GameInput.Button, string> bindingCache = new();
 		static readonly Dictionary<GameInput.Button, Dictionary<string, string>> textCache = new();
 
@@ -158,14 +147,14 @@ namespace UITweaks.StorageTweaks
 			static bool prepare() => Main.config.storageTweaks.enabled;
 
 			[HarmonyPostfix]
-			[HarmonyPatch(typeof(HandReticle), "OnBindingsChanged")]
-			[HarmonyPatch(typeof(HandReticle), "OnLanguageChanged")]
+			[HarmonyPatch(typeof(HandReticle), nameof(HandReticle.OnBindingsChanged))]
+			[HarmonyPatch(typeof(HandReticle), nameof(HandReticle.OnLanguageChanged))]
 			static void clearCache()
 			{
 				bindingCache.Clear();
 				textCache.Values.forEach(c => c.Clear());
 			}
 		}
-#endif // GAME_SN
+#endif // SUBNAUTICA
 	}
 }

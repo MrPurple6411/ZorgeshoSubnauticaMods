@@ -5,7 +5,7 @@ using Common;
 
 namespace PrawnSuitJetUpgrade
 {
-	[HarmonyPatch(typeof(Exosuit), "FixedUpdate")]
+	[HarmonyPatch(typeof(Exosuit), nameof(Exosuit.FixedUpdate))]
 	static class Exosuit_FixedUpdate_Patch
 	{
 		static void Postfix(Exosuit __instance)
@@ -29,7 +29,7 @@ namespace PrawnSuitJetUpgrade
 	}
 
 
-	[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
+	[HarmonyPatch(typeof(Exosuit), nameof(Exosuit.OnUpgradeModuleChange))]
 	static class Exosuit_OnUpgradeModuleChange_Patch
 	{
 		const float initialThrustConsumption = 0.09f;

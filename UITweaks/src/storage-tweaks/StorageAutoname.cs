@@ -12,7 +12,7 @@ namespace UITweaks.StorageTweaks
 {
 	[StorageHandler(TechType.SmallLocker)]
 	[StorageHandler(TechType.SmallStorage)]
-#if GAME_BZ
+#if BELOWZERO
 	[StorageHandler(TechType.SeaTruckStorageModule)]
 	[StorageHandler(TechType.SeaTruckFabricatorModule)]
 #endif

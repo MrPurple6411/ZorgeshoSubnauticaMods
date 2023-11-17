@@ -31,7 +31,7 @@ namespace StasisTorpedo
 			}
 
 			var explosionPrefab = new GameObject("StasisExplosion", typeof(StasisExplosion));
-			SMLHelper.V2.Assets.ModPrefabCache.AddPrefab(explosionPrefab, false);
+			Nautilus.Assets.ModPrefabCache.AddPrefab(explosionPrefab);
 
 			var torpedoPrefab = PrefabUtils.storePrefabCopy(gasTorpedoPrefab);
 			torpedoPrefab.GetComponent<SeamothTorpedo>().explosionPrefab = explosionPrefab;

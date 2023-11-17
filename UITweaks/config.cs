@@ -69,9 +69,9 @@ namespace UITweaks
 			public class PingTypes
 			{
 				public PingType primary = PingType.Beacon;
-#if GAME_SN
+#if SUBNAUTICA
 				public PingType secondary = PingType.Signal;
-#elif GAME_BZ
+#elif BELOWZERO
 				public PingType secondary = PingType.ArchitectArtifact;
 #endif
 				public PingType tertiary = PingType.MapRoomCamera;
@@ -175,7 +175,7 @@ namespace UITweaks
 		}
 		public readonly StorageTweaks storageTweaks = new();
 
-#if GAME_SN
+#if SUBNAUTICA
 		class HideRenameBeacons: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => !Main.config.oldRenameBeaconsModActive; }
 
@@ -187,7 +187,7 @@ namespace UITweaks
 		[Options.Field("Rename beacons in the inventory", "Use middle mouse button (or custom hotkey) to rename beacons that are in the inventory")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public bool renameBeacons = true;
-#if GAME_BZ
+#if BELOWZERO
 		[Options.Field("Switch targets for mineral detectors", "Use mouse wheel while hovering over a mineral detector in the inventory to switch between target objects")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public bool switchMetalDetectorTarget = true;
@@ -217,7 +217,7 @@ namespace UITweaks
 
 		protected override void onLoad()
 		{
-#if GAME_SN
+#if SUBNAUTICA
 			if (Mod.isModEnabled("RenameBeacons"))
 			{
 				oldRenameBeaconsModActive = true;
@@ -241,9 +241,9 @@ namespace UITweaks
 		public static readonly string ids_freeSlots = "Free slots: {0}/{1}";
 		public static readonly string ids_fullContainer = "Full";
 		public static readonly string ids_otherItems = " and other items";
-#if GAME_SN
+#if SUBNAUTICA
 		public static readonly string ids_modMerged = "<b>RenameBeacons</b> mod is now merged into <b>UI Tweaks</b> mod, you can safely delete it.";
-#elif GAME_BZ
+#elif BELOWZERO
 		public static readonly string ids_metalDetectorTarget = "Target: ";
 		public static readonly string ids_metalDetectorSwitchTarget = "switch target";
 #endif

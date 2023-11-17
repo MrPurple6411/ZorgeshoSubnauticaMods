@@ -2,23 +2,26 @@
 using Common.Harmony;
 using Common.Crafting;
 using Common.Configuration;
+using BepInEx;
 
 namespace DebrisRecycling
 {
-	public static class Main
+	[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+	[BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+	public class Main: BaseUnityPlugin
 	{
 		internal const string prefabsConfigName = "prefabs_config.json";
 
 		internal static readonly ModConfig config = Mod.init<ModConfig>();
 
-		public static void patch()
+		public void Awake()
 		{
 			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
 
 			LanguageHelper.init(); // after CraftHelper
 
-			DebrisPatcher.init(Mod.loadConfig<PrefabsConfig>(prefabsConfigName, Config.LoadOptions.ProcessAttributes));
+			DebrisPatcher.init(Mod.loadConfig<PrefabsConfig>(prefabsConfigName, Common.Configuration.Config.LoadOptions.ProcessAttributes));
 		}
 	}
 }

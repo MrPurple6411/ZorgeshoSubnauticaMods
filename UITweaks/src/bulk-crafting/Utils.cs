@@ -1,7 +1,7 @@
-﻿using SMLHelper.V2.Handlers;
+﻿using Nautilus.Handlers;
 using Common.Crafting;
 
-#if GAME_BZ
+#if BELOWZERO
 using System.Linq;
 using System.Collections.ObjectModel;
 
@@ -16,9 +16,9 @@ namespace UITweaks
 	{
 		static bool isCraftingRequiresResources()
 		{
-#if GAME_SN
+#if SUBNAUTICA
 			return GameModeUtils.RequiresIngredients();
-#elif GAME_BZ
+#elif BELOWZERO
 			return GameModeManager.GetOption<bool>(GameOption.CraftingRequiresResources);
 #endif
 		}
@@ -27,29 +27,26 @@ namespace UITweaks
 		{
 			public static TechInfo getTechInfo(TechType techType)
 			{
-#if GAME_SN
-				return CraftDataHandler.GetTechData(techType);
-#elif GAME_BZ
 				return CraftDataHandler.GetRecipeData(techType);
-#endif
 			}
 
 			public static void setTechInfo(TechType techType, TechInfo techInfo)
 			{
-#if GAME_SN
+#if SUBNAUTICA
 				CraftData.techData[techType] = techInfo;
-#elif GAME_BZ
+#elif BELOWZERO
 				// for BZ we using TechDataPatches below
 #endif
 			}
-#if GAME_BZ
+
+#if BELOWZERO
 			[OptionalPatch, PatchClass]
 			static class TechDataPatches
 			{
 				static bool prepare() => Main.config.bulkCrafting.enabled;
 
 				[HarmonyPriority(Priority.Low)]
-				[HarmonyPrefix, HarmonyHelper.Patch(typeof(TechData), "GetCraftAmount")]
+				[HarmonyPrefix, HarmonyHelper.Patch(typeof(TechData), nameof(TechData.GetCraftAmount))]
 				static bool TechData_GetCraftAmount_Prefix(TechType techType, ref int __result)
 				{
 					if (!isAmountChanged(techType))
@@ -60,7 +57,7 @@ namespace UITweaks
 				}
 
 				[HarmonyPriority(Priority.Low)]
-				[HarmonyPrefix, HarmonyHelper.Patch(typeof(TechData), "GetIngredients")]
+				[HarmonyPrefix, HarmonyHelper.Patch(typeof(TechData), nameof(TechData.GetIngredients))]
 				static bool TechData_GetIngredients_Prefix(TechType techType, ref ReadOnlyCollection<Ingredient> __result)
 				{
 					if (!isAmountChanged(techType))
@@ -70,7 +67,7 @@ namespace UITweaks
 					return false;
 				}
 			}
-#endif // GAME_BZ
+#endif // BELOWZERO
 		}
 	}
 }

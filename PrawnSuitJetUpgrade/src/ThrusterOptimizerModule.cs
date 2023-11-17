@@ -22,7 +22,7 @@ namespace PrawnSuitJetUpgrade
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitJetUpgradeModule);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules", TechType.ExosuitJetUpgradeModule);
-#if GAME_BZ
+#if BELOWZERO
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.ExosuitJetUpgradeModule);
 #endif
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Passive);

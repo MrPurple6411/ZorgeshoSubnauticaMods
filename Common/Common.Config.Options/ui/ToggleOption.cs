@@ -1,5 +1,5 @@
 ﻿using System;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
 
 namespace Common.Configuration
 {
@@ -28,7 +28,7 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				options.AddToggleOption(id, label, cfgField.value.convert<bool>());
+				options.AddItem(ModToggleOption.Create(id, label, cfgField.value.convert<bool>()));
 			}
 
 			public override void onValueChange(EventArgs e)

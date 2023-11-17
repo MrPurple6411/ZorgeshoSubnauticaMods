@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-#if GAME_SN
+#if SUBNAUTICA
 using System.Collections.Generic;
 #endif
 
@@ -49,9 +49,6 @@ namespace Common.Configuration
 			#region base tooltip
 			public class Tooltip: MonoBehaviour, ITooltip
 			{
-#if GAME_SN // BZ has bigger tooltips, so we don't need that
-				const int defaultTextSize = 19;
-#endif
 				public class Add: ModOption.IOnGameObjectChangeHandler
 				{
 					string tooltip;
@@ -81,11 +78,7 @@ namespace Common.Configuration
 
 						if (tooltip == null)
 							return;
-#if GAME_SN
-						// adjust text size for default tooltip (before we registering string with LanguageHelper)
-						if (tooltipCmpType == null)
-							tooltip = $"<size={defaultTextSize}>" + tooltip + "</size>";
-#endif
+
 						if (localizeAllow)
 						{
 							string stringID = option.id + ".tooltip";
@@ -140,12 +133,9 @@ namespace Common.Configuration
 				protected string _tooltip;
 
 				protected virtual string getTooltip() => tooltip;
-#if GAME_SN
-				public void GetTooltip(out string tooltipText, List<TooltipIcon> _) => tooltipText = getTooltip();
-#elif GAME_BZ
 				public void GetTooltip(TooltipData tooltip) { tooltip.prefix.Append(getTooltip()); }
 				public bool showTooltipOnDrag => false;
-#endif
+
 				static readonly Type layoutElementType = Type.GetType("UnityEngine.UI.LayoutElement, UnityEngine.UI");
 				void Start()
 				{

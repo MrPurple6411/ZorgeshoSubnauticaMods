@@ -20,10 +20,10 @@ namespace StasisTorpedo
 			TechType = register("Stasis torpedo", "Generates a localized stasis field. Load this to a vehicle torpedo bay.");
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.GasTorpedo);
-#if GAME_SN
+#if SUBNAUTICA
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "Torpedoes");
 			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.GasTorpedo);
-#elif GAME_BZ
+#elif BELOWZERO
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules", TechType.GasTorpedo);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.GasTorpedo);
 			setTechTypeForUnlock(TechType.GasTorpedo);

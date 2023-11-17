@@ -37,7 +37,7 @@ namespace GravTrapImproved
 
 		static bool isGravTrap(this TechType techType) => techType == TechType.Gravsphere || techType == GravTrapMK2.TechType;
 
-		[HarmonyPatch(typeof(TooltipFactory), "ItemCommons")]
+		[HarmonyPatch(typeof(TooltipFactory), nameof(TooltipFactory.ItemCommons))]
 		static class TooltipFactory_ItemCommons_Patch
 		{
 			static void Postfix(StringBuilder sb, TechType techType, GameObject obj)
@@ -51,7 +51,7 @@ namespace GravTrapImproved
 			}
 		}
 
-		[HarmonyPatch(typeof(TooltipFactory), "ItemActions")]
+		[HarmonyPatch(typeof(TooltipFactory), nameof(TooltipFactory.ItemActions))]
 		static class TooltipFactory_ItemActions_Patch
 		{
 			static readonly string buttons = TypeListSwitcher.getActionString();
@@ -68,7 +68,7 @@ namespace GravTrapImproved
 		{
 			static bool prepare() => Main.config.extraGUIText;
 
-			[HarmonyPostfix, HarmonyPatch(typeof(GUIHand), "OnUpdate")]
+			[HarmonyPostfix, HarmonyPatch(typeof(GUIHand), nameof(GUIHand.OnUpdate))]
 			static void GUIHand_OnUpdate_Postfix(GUIHand __instance)
 			{
 				if (!__instance.player.IsFreeToInteract() || !AvatarInputHandler.main.IsEnabled())
@@ -78,7 +78,7 @@ namespace GravTrapImproved
 					HandReticle.main.setText(textUse: tool.GetCustomUseText(), textUseSubscript: GravTrapObjectsType.getFrom(tool.gameObject).techTypeListName);
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(Pickupable), "OnHandHover")]
+			[HarmonyPostfix, HarmonyPatch(typeof(Pickupable), nameof(Pickupable.OnHandHover))]
 			static void Pickupable_OnHandHover_Postfix(Pickupable __instance)
 			{
 				if (__instance.GetTechType().isGravTrap())

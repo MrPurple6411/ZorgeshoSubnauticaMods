@@ -14,6 +14,7 @@ using System.Net;
 namespace Common.Utils
 {
 	using Reflection;
+	using System.Collections.Generic;
 
 	struct Version
 	{
@@ -59,12 +60,17 @@ namespace Common.Utils
 		public override string ToString() => $"{major}{separator}{minor}{separator}{patch}";
 	}
 
-
 	static class VersionChecker
 	{
 		const float checkDelaySecs		= Mod.Consts.isDevBuild? 0f: 15f;
 		const float checkDelayRangeSecs = Mod.Consts.isDevBuild? 0f: 60f;
 		const float checkPeriodHours	= Mod.Consts.isDevBuild? 0f: 1f;
+
+		// Mod GUID -> update URL
+		internal static Dictionary<string, string> updateURLs = new() 
+		{
+			// TODO: add update URLs
+		};
 
 		static readonly string versionFilePath = Paths.modRootPath + "latest-version.txt";
 #if TEST_UPDATE

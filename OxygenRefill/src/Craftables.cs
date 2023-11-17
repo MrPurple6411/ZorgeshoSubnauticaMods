@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
-using SMLHelper.V2.Handlers;
+using Nautilus.Crafting;
+using Nautilus.Handlers;
 
 using Common.Crafting;
 
@@ -9,7 +9,7 @@ namespace OxygenRefill
 	[CraftHelper.PatchFirst]
 	class OxygenRefillStation: PoolCraftableObject
 	{
-		public static ModCraftTreeRoot treeRootNode { get; private set; }
+		public static ModCraftTreeRoot treeRootNode;
 		CraftTree.Type treeType;
 
 		protected override TechInfo getTechInfo() => new
@@ -22,7 +22,7 @@ namespace OxygenRefill
 		public override void patch()
 		{
 			register(L10n.ids_OxygenStation, L10n.ids_OxygenStationDesc, TechType.Workbench);
-			treeRootNode = CraftTreeHandler.CreateCustomCraftTreeAndType(ClassID, out treeType);
+			treeType = EnumHandler.AddEntry<CraftTree.Type>(ClassID).CreateCraftTreeRoot(out treeRootNode);
 
 			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.Workbench);
 			unlockOnStart();
@@ -97,7 +97,7 @@ namespace OxygenRefill
 	class T2: TankRefill { public T2(): base(TechType.DoubleTank, 10f) {} }
 	class T3: TankRefill { public T3(): base(TechType.PlasteelTank, 10f) {} }
 	class T4: TankRefill { public T4(): base(TechType.HighCapacityTank, 15f) {} }
-#if GAME_BZ
+#if BELOWZERO
 	class T5: TankRefill { public T5(): base(TechType.SuitBoosterTank, 10f) {} }
 #endif
 }

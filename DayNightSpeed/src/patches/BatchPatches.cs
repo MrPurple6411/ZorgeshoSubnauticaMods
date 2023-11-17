@@ -19,12 +19,12 @@ namespace DayNightSpeed
 
 		// simple transpiler for changing 1.0 to current value of dayNightSpeed
 		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(DayNightCycle), "Update")]
-		[HarmonyPatch(typeof(DayNightCycle), "Resume")]
-		[HarmonyPatch(typeof(DayNightCycle), "StopSkipTimeMode")]
-		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_day")]
-		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_night")]
-		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_daynight")]
+		[HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.Update))]
+		[HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.Resume))]
+		[HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.StopSkipTimeMode))]
+		[HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.OnConsoleCommand_day))]
+		[HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.OnConsoleCommand_night))]
+		[HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.OnConsoleCommand_daynight))]
 		static CIEnumerable transpiler_dayNightSpeed(CIEnumerable cins) =>
 			cins.ciReplace(ci => ci.isLDC(1.0f), CIUtils.speed);
 
@@ -35,20 +35,17 @@ namespace DayNightSpeed
 				CIHelper._codeForCfgVar(multCfgVarName), OpCodes.Mul);
 
 		[HarmonyTranspiler] // power charging
-		[HarmonyPatch(typeof(Charger), "Update")]
-		[HarmonyPatch(typeof(SolarPanel), "Update")]
-		[HarmonyPatch(typeof(ThermalPlant), "AddPower")]
-		[HarmonyPatch(typeof(BaseBioReactor), "Update")]
-		[HarmonyPatch(typeof(BaseNuclearReactor), "Update")]
+		[HarmonyPatch(typeof(Charger), nameof(Charger.Update))]
+		[HarmonyPatch(typeof(SolarPanel), nameof(SolarPanel.Update))]
+		[HarmonyPatch(typeof(ThermalPlant), nameof(ThermalPlant.AddPower))]
+		[HarmonyPatch(typeof(BaseBioReactor), nameof(BaseBioReactor.Update))]
+		[HarmonyPatch(typeof(BaseNuclearReactor), nameof(BaseNuclearReactor.Update))]
 		static CIEnumerable transpiler_dnsClamped01_charge(CIEnumerable cins) =>
 			transpiler_dnsClamped01(cins, nameof(ModConfig.auxSpeedPowerCharge));
 
 		[HarmonyTranspiler] // power consuming
-#if GAME_SN
-		[HarmonyPatch(typeof(BaseRoot), "ConsumePower")]
-#endif
-		[HarmonyPatch(typeof(ToggleLights), "UpdateLightEnergy")]
-		[HarmonyPatch(typeof(FiltrationMachine), "UpdateFiltering")]
+		[HarmonyPatch(typeof(ToggleLights), nameof(ToggleLights.UpdateLightEnergy))]
+		[HarmonyPatch(typeof(FiltrationMachine), nameof(FiltrationMachine.UpdateFiltering))]
 		static CIEnumerable transpiler_dnsClamped01_consume(CIEnumerable cins) =>
 			transpiler_dnsClamped01(cins, nameof(ModConfig.auxSpeedPowerConsume));
 	}

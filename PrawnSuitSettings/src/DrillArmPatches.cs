@@ -10,7 +10,7 @@ using Common.Harmony;
 namespace PrawnSuitSettings
 {
 	// don't auto pickup resources after drilling
-	[OptionalPatch, HarmonyPatch(typeof(Drillable), "ManagedUpdate")]
+	[OptionalPatch, HarmonyPatch(typeof(Drillable), nameof(Drillable.ManagedUpdate))]
 	static class Drillable_ManagedUpdate_Patch__ResourcesPickup
 	{
 		static bool Prepare() => !Main.config.autoPickupDrillableResources;
@@ -34,7 +34,7 @@ namespace PrawnSuitSettings
 			public bool isUsingArm() => usingArm;
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "OnPilotModeBegin")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), nameof(Exosuit.OnPilotModeBegin))]
 		static void Exosuit_OnPilotModeBegin_Postfix(Exosuit __instance) =>
 			__instance.GetComponentInChildren<ArmToggle>()?.setUsingArm(false);
 

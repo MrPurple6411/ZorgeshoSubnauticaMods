@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Common;
 
-#if GAME_BZ
+#if BELOWZERO
 using System.Collections.Generic;
 #endif
 
@@ -58,7 +58,7 @@ namespace UITweaks.StorageTweaks
 			protected override ColoredLabel initLabel() => gameObject.getChild("../LidLabel/Label")?.GetComponent<ColoredLabel>();
 		}
 
-#if GAME_BZ
+#if BELOWZERO
 		[StorageHandler(TechType.SeaTruckStorageModule)]
 		[StorageHandler(TechType.SeaTruckFabricatorModule)]
 		class SeaTruckStorageLabel: StorageLabel, IStorageLabelInfo
@@ -104,6 +104,6 @@ namespace UITweaks.StorageTweaks
 				return gameObject.getChild($"../{tuple.name}")?.GetComponent<ColoredLabel>();
 			}
 		}
-#endif // GAME_BZ
+#endif // BELOWZERO
 	}
 }

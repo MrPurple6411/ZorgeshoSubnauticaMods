@@ -7,7 +7,7 @@ using Common;
 using Common.Reflection;
 using Common.Configuration;
 
-#if GAME_BZ
+#if BELOWZERO
 using System;
 using System.Collections.Generic;
 #endif
@@ -157,7 +157,7 @@ namespace CustomHotkeys
 		#endregion
 
 		#region gameplay commands
-#if GAME_SN // doesn't needed for BZ
+#if SUBNAUTICA // doesn't needed for BZ
 		public void autoforward(bool? enabled)
 		{
 			if (enabled == null)
@@ -205,11 +205,7 @@ namespace CustomHotkeys
 				var techType = data[i].convert<TechType>();
 				if (techType != default && getItemFromInventory(techType) is InventoryItem item)
 				{
-#if GAME_SN
-					Inventory.main.UseItem(item);
-#elif GAME_BZ
 					Inventory.main.ExecuteItemAction(item, 0);
-#endif
 					break;
 				}
 			}
@@ -221,7 +217,7 @@ namespace CustomHotkeys
 		{
 			if (getProperVehicle(distance) is Vehicle vehicle)
 				vehicle.EnterVehicle(Player.main, true, true);
-#if GAME_BZ
+#if BELOWZERO
 			else if (getProperSeaTruck(distance) is SeaTruckSegment truck)
 				enterSeaTruck(truck);
 #endif
@@ -230,12 +226,12 @@ namespace CustomHotkeys
 		public void vehicle_upgrades()
 		{
 			MonoBehaviour vehicle = getProperVehicle(4f);
-#if GAME_BZ
+#if BELOWZERO
 			vehicle ??= getProperSeaTruck(4f);
 #endif
 			vehicle?.GetComponentInChildren<VehicleUpgradeConsoleInput>().OnHandClick(null);
 		}
-#if GAME_BZ
+#if BELOWZERO
 		public void seatruck_forcedexit()
 		{
 			SeaTruckForcedExit.exitFrom(getPilotedSeaTruck()?.motor);
@@ -268,12 +264,16 @@ namespace CustomHotkeys
 			if (looseSegment && segmentDistance < distance && segmentAngle < angle)
 				SeaTruckForcedConnect.connect(rearSegment, looseSegment);
 		}
-#endif // GAME_BZ
+#endif // BELOWZERO
 		#endregion
 
 		#region game* commands
 #pragma warning disable CS0618 // obsolete
+#if SUBNAUTICA
 		public void game_startnew(GameMode gameMode = GameMode.Creative)
+#elif BELOWZERO
+		public void game_startnew(GameModePresetId gameMode = GameModePresetId.Creative)
+#endif
 		{
 			if (uGUI_MainMenu.main)
 				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.StartNewGame(gameMode));
@@ -309,10 +309,10 @@ namespace CustomHotkeys
 			}
 
 			if (gameinfoToLoad != null)
-#if GAME_SN
-				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
-#elif GAME_BZ
-				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, "", gameinfoToLoad.changeSet, gameinfoToLoad.gameMode, 2));
+#if SUBNAUTICA
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, "", gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
+#elif BELOWZERO
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, "", gameinfoToLoad.changeSet, gameinfoToLoad.gameModePresetId, gameinfoToLoad.gameOptions, 2));
 #endif
 		}
 
@@ -328,7 +328,7 @@ namespace CustomHotkeys
 			else
 				IngameMenu.main?.QuitGame(quitToDesktop);
 		}
-		#endregion
+#endregion
 
 		#region utils
 		static InventoryItem getItemFromInventory(TechType techType)
@@ -350,7 +350,7 @@ namespace CustomHotkeys
 
 			return distance < maxDistance? vehicle: null;
 		}
-#if GAME_BZ
+#if BELOWZERO
 		static SeaTruckSegment getProperSeaTruck(float maxDistance)
 		{
 			if (Player.main?.currentInterior != null)
@@ -391,6 +391,6 @@ namespace CustomHotkeys
 			return (index >= 0 && index < chain.Count)? chain[index]: null;
 		}
 #endif
-		#endregion
+#endregion
 	}
 }

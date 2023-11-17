@@ -1,5 +1,5 @@
 ﻿using System;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
 
 namespace Common.Configuration
 {

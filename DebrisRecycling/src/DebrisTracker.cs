@@ -51,10 +51,10 @@ namespace DebrisRecycling
 
 		public static void untrackInvalid()
 		{
-			if (!ResourceTracker.resources.TryGetValue(SalvageableDebrisDR.TechType, out var trackedResources))
+			if (!ResourceTrackerDatabase.resources.TryGetValue(SalvageableDebrisDR.TechType, out var trackedResources))
 				return;
 
-			List<ResourceTracker.ResourceInfo> toRemove = new();
+			List<ResourceTrackerDatabase.ResourceInfo> toRemove = new();
 
 			foreach (var info in trackedResources)
 			{
@@ -72,7 +72,7 @@ namespace DebrisRecycling
 		}
 
 
-		[HarmonyPatch(typeof(UniqueIdentifier), "Awake")]
+		[HarmonyPatch(typeof(UniqueIdentifier), nameof(UniqueIdentifier.Awake))]
 		static class UniqueIdentifier_Awake_Patch
 		{
 			static bool Prepare() => Main.config.addDebrisToScannerRoom;

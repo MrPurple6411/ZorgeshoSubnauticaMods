@@ -203,15 +203,10 @@ namespace UITweaks
 					PingManager.onRemove -= _makeDirty;
 				}
 			}
-#if GAME_SN
-			void _makeDirty(int _) => _makeDirty();
-			void _makeDirty(int _1, Color _2) => _makeDirty();
-			void _makeDirty(int _1, PingInstance _2) => _makeDirty();
-#elif GAME_BZ
-			void _makeDirty(string _) => _makeDirty();
-			void _makeDirty(string _1, Color _2) => _makeDirty();
-			void _makeDirty(PingInstance _) => _makeDirty();
-#endif
+
+			void _makeDirty<T>(T _) => _makeDirty();
+			void _makeDirty<T,K>(T _1, K _2) => _makeDirty();
+
 			void _makeDirty()
 			{																				"PingToggleToolbar: makeDirty()".logDbg();
 				dirty = true;
@@ -301,14 +296,14 @@ namespace UITweaks
 				return pingTogglesEnabled;
 			}
 
-			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_PingTab), "Open")]
+			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_PingTab), nameof(uGUI_PingTab.Open))]
 			static void addToolbar(uGUI_PingTab __instance)
 			{
 				__instance.gameObject.ensureComponent<PingToggleToolbar>();
 			}
 
 			// skip disabled pings when ButtonAll clicked
-			[HarmonyTranspiler, HarmonyPatch(typeof(uGUI_PingTab), "SetEntriesVisibility")]
+			[HarmonyTranspiler, HarmonyPatch(typeof(uGUI_PingTab), nameof(uGUI_PingTab.SetEntriesVisibility))]
 			static IEnumerable<CodeInstruction> setEntriesVisibility(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 			{
 				var list = cins.ToList();

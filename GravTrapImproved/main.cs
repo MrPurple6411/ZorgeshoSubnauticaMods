@@ -2,15 +2,18 @@
 using Common.Harmony;
 using Common.Crafting;
 using Common.Configuration;
+using BepInEx;
 
 namespace GravTrapImproved
 {
-	public static class Main
+	[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+	[BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+	public class Main: BaseUnityPlugin
 	{
 		internal static readonly ModConfig config = Mod.init<ModConfig>();
-		internal static readonly TypesConfig typesConfig = Mod.loadConfig<TypesConfig>("types_config.json", Config.LoadOptions.ReadOnly | Config.LoadOptions.ProcessAttributes);
+		internal static readonly TypesConfig typesConfig = Mod.loadConfig<TypesConfig>("types_config.json", Common.Configuration.Config.LoadOptions.ReadOnly | Common.Configuration.Config.LoadOptions.ProcessAttributes);
 
-		public static void patch()
+		public void Awake()
 		{
 			LanguageHelper.init();
 			PersistentConsoleCommands.register<ConsoleCommands>();

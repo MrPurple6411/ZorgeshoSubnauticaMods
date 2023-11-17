@@ -1,5 +1,5 @@
 ﻿using System;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
 
 namespace Common.Configuration
 {
@@ -63,14 +63,14 @@ namespace Common.Configuration
 				float value = cfgField.value.convert<float>();
 				string format = Mod.Consts.isGameSN? valueFormat: (valueFormat ?? "{0:F0}");
 
-				options.AddSliderOption(id, label, Math.Min(min, value), Math.Max(max, value), value, defaultValue, format, Mod.Consts.isGameSN? 0f: 0.001f);
+				options.AddItem(ModSliderOption.Create(id, label, Math.Min(min, value), Math.Max(max, value), value, defaultValue, format, 0.001f));
 			}
 
 			public override void onValueChange(EventArgs e)
 			{
 				cfgField.value = (e as SliderChangedEventArgs)?.Value;
 			}
-#if GAME_BZ // fix for bug with tooltips on sliders
+#if BELOWZERO // fix for bug with tooltips on sliders
 			static readonly Type textMeshProUGUI = Type.GetType("TMPro.TextMeshProUGUI, Unity.TextMeshPro");
 			static readonly PropertyWrapper raycastTarget = textMeshProUGUI.property("raycastTarget").wrap();
 

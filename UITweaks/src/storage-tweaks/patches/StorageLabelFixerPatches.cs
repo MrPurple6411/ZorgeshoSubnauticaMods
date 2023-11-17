@@ -1,4 +1,4 @@
-﻿#if GAME_SN
+﻿#if SUBNAUTICA
 using HarmonyLib;
 using Common.Harmony;
 
@@ -6,7 +6,7 @@ namespace UITweaks.StorageTweaks
 {
 	static partial class StorageLabelFixers
 	{
-		[OptionalPatch, HarmonyPatch(typeof(ColoredLabel), "OnProtoDeserialize")]
+		[OptionalPatch, HarmonyPatch(typeof(ColoredLabel), nameof(ColoredLabel.OnProtoDeserialize))]
 		static class ColoredLabel_OnProtoDeserialize_Patch
 		{
 			static bool Prepare() => tweakEnabled;
@@ -21,4 +21,4 @@ namespace UITweaks.StorageTweaks
 		}
 	}
 }
-#endif // GAME_SN
+#endif // SUBNAUTICA

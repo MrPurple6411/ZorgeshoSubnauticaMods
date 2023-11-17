@@ -6,7 +6,7 @@ using Common.Configuration;
 
 namespace WarningsDisabler
 {
-	[HarmonyPatch(typeof(PDANotification), "Play", typeof(object[]))]
+	[HarmonyPatch(typeof(PDANotification), nameof(PDANotification.Play), typeof(object[]))]
 	static class PDANotification_Play_Patch
 	{
 		static bool Prefix(PDANotification __instance)
@@ -15,7 +15,7 @@ namespace WarningsDisabler
 		}
 	}
 
-	[HarmonyPatch(typeof(VoiceNotification), "Play", typeof(object[]))]
+	[HarmonyPatch(typeof(VoiceNotification), nameof(VoiceNotification.Play), typeof(object[]))]
 	static class VoiceNotification_Play_Patch
 	{
 		static bool Prefix(VoiceNotification __instance)
@@ -39,14 +39,14 @@ namespace WarningsDisabler
 		}
 
 		[HarmonyPrefix]
-		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
-		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
+		[HarmonyPatch(typeof(LowOxygenAlert), nameof(LowOxygenAlert.Update))]
+		[HarmonyPatch(typeof(HintSwimToSurface), nameof(HintSwimToSurface.Update))]
 		static bool OxygenAlert_Prefix() => Main.config.oxygenWarningsEnabled;
 	}
 
-#if GAME_BZ
+#if BELOWZERO
 	// Disabling disclaimer on startup
-	[HarmonyPatch(typeof(FlashingLightsDisclaimer), "Start")]
+	[HarmonyPatch(typeof(FlashingLightsDisclaimer), nameof(FlashingLightsDisclaimer.Start))]
 	static class FlashingLightsDisclaimer_Start_Patch
 	{
 		static bool Prepare() => !Main.config.showDisclaimer;

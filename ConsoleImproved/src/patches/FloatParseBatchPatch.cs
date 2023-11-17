@@ -23,16 +23,16 @@ namespace ConsoleImproved
 		static bool prepare() => Main.config.fixVanillaCommandsFloatParse;
 
 		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(BaseFloodSim), "OnConsoleCommand_baseflood")]
-		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_daynightspeed")]
-		[HarmonyPatch(typeof(CreateConsoleCommand), "OnConsoleCommand_create")]
-		[HarmonyPatch(typeof(GameModeConsoleCommands), "OnConsoleCommand_damage")]
-		[HarmonyPatch(typeof(PlayerMotor), "OnConsoleCommand_swimx")]
-		[HarmonyPatch(typeof(SNCameraRoot), "OnConsoleCommand_farplane")]
-		[HarmonyPatch(typeof(SNCameraRoot), "OnConsoleCommand_nearplane")]
-		[HarmonyPatch(typeof(SpawnConsoleCommand), "OnConsoleCommand_spawn")]
-		[HarmonyPatch(typeof(SpeedConsoleCommand), "OnConsoleCommand_speed")]
-		[HarmonyPatch(typeof(WaterParkCreature), "OnConsoleCommand_setwpcage")]
+		[HarmonyPatch(typeof(BaseFloodSim), nameof(BaseFloodSim.OnConsoleCommand_baseflood))]
+		[HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.OnConsoleCommand_daynightspeed))]
+		[HarmonyPatch(typeof(CreateConsoleCommand), nameof(CreateConsoleCommand.OnConsoleCommand_create))]
+		[HarmonyPatch(typeof(GameModeConsoleCommands), nameof(GameModeConsoleCommands.OnConsoleCommand_damage))]
+		[HarmonyPatch(typeof(PlayerMotor), nameof(PlayerMotor.OnConsoleCommand_swimx))]
+		[HarmonyPatch(typeof(SNCameraRoot), nameof(SNCameraRoot.OnConsoleCommand_farplane))]
+		[HarmonyPatch(typeof(SNCameraRoot), nameof(SNCameraRoot.OnConsoleCommand_nearplane))]
+		[HarmonyPatch(typeof(SpawnConsoleCommand), nameof(SpawnConsoleCommand.OnConsoleCommand_spawn))]
+		[HarmonyPatch(typeof(SpeedConsoleCommand), nameof(SpeedConsoleCommand.OnConsoleCommand_speed))]
+		[HarmonyPatch(typeof(WaterParkCreature), nameof(WaterParkCreature.OnConsoleCommand_setwpcage))]
 		static IEnumerable<CodeInstruction> floatParseFix(IEnumerable<CodeInstruction> cins)
 		{
 			var list = cins.ciReplace(ci => ci.isOp(OpCodes.Call, floatParse),

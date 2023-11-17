@@ -27,7 +27,7 @@ namespace HabitatPlatform
 			if (framePosChanged > 0 && Time.frameCount > framePosChanged + frameDelay)
 			{																								$"MapRoomFixer: reloading map".logDbg();
 				framePosChanged = 0;
-				mrf.ReloadMapWorld();
+				mrf.miniWorld.RebuildHologram();
 			}
 
 			if (transform.position == lastPosition)
@@ -35,10 +35,10 @@ namespace HabitatPlatform
 																											$"MapRoomFixer: map room position changed ({lastPosition} => {transform.position})".logDbg();
 			framePosChanged = Time.frameCount;
 			lastPosition = transform.position;
-			mrf.matInstance.SetVector(ShaderPropertyID._MapCenterWorldPos, lastPosition);
+			mrf.miniWorld.materialInstance.SetVector(ShaderPropertyID._MapCenterWorldPos, lastPosition);
 		}
 
-		[HarmonyPatch(typeof(MapRoomFunctionality), "Start")]
+		[HarmonyPatch(typeof(MapRoomFunctionality), nameof(MapRoomFunctionality.Start))]
 		static class MapRoomFunctionality_Start_Patch
 		{
 			static void Postfix(MapRoomFunctionality __instance)

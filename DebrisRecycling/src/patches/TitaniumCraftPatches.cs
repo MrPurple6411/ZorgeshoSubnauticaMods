@@ -4,6 +4,9 @@ using HarmonyLib;
 
 using Common;
 using Common.Harmony;
+using Nautilus.Handlers;
+using Nautilus.Crafting;
+using static CraftData;
 
 namespace DebrisRecycling
 {
@@ -12,7 +15,7 @@ namespace DebrisRecycling
 	{
 		static bool prepare() => Main.config.craftConfig.dynamicTitaniumRecipe;
 
-		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), nameof(uGUI_CraftingMenu.Open))]
 		static void uGUICraftingMenu_Open_Prefix(CraftTree.Type treeType, ITreeActionReceiver receiver)
 		{
 			if (treeType == CraftTree.Type.Fabricator)
@@ -22,10 +25,10 @@ namespace DebrisRecycling
 			}
 		}
 
-		[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), "Recipe")]
-		static void TooltipFactory_Recipe_Prefix(TechType techType, out string tooltipText)
+		[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), nameof(TooltipFactory.CraftRecipe))]
+		static void TooltipFactory_Recipe_Prefix(TechType techType, ref TooltipData data)
 		{
-			tooltipText = null;
+			data.Reset();
 
 			if (techType != TechType.Titanium)
 				return;
@@ -36,7 +39,7 @@ namespace DebrisRecycling
 				updateTitaniumRecipe();
 		}
 
-		[HarmonyPatch(typeof(GhostCrafter), "Craft")]
+		[HarmonyPatch(typeof(GhostCrafter), nameof(GhostCrafter.Craft))]
 		static class GhostCrafter_Craft_Patch
 		{
 			static bool Prepare() => prepare() && Main.config.extraPowerConsumption;
@@ -83,17 +86,17 @@ namespace DebrisRecycling
 
 		static void setTitaniumRecipe(int scrapCount, int smallScrapCount)
 		{																								$"Set titanium recipe: scrap:{scrapCount}, small scrap:{smallScrapCount}".logDbg();
-			CraftData.techData.TryGetValue(TechType.Titanium, out CraftData.TechData techData);
+			RecipeData techData = CraftDataHandler.GetRecipeData(TechType.Titanium);
 
-			techData._craftAmount = getCraftAmount(scrapCount, smallScrapCount);
-			CraftData.craftingTimes[TechType.Titanium] = 0.7f * techData._craftAmount;
-			extraPowerConsumption = getPowerConsumption(techData._craftAmount);
+			techData.craftAmount = getCraftAmount(scrapCount, smallScrapCount);
+			CraftDataHandler.SetCraftingTime(TechType.Titanium, 0.7f * techData.craftAmount) ;
+			extraPowerConsumption = getPowerConsumption(techData.craftAmount);
 
-			techData._ingredients.Clear();
+			techData.Ingredients.Clear();
 			if (scrapCount > 0)
-				techData._ingredients.Add(TechType.ScrapMetal, scrapCount);
+				techData.Ingredients.Add(new Ingredient(TechType.ScrapMetal, scrapCount));
 			if (smallScrapCount > 0)
-				techData._ingredients.Add(ScrapMetalSmall.TechType, smallScrapCount);
+				techData.Ingredients.Add(new Ingredient(ScrapMetalSmall.TechType, smallScrapCount));
 		}
 
 		static void updateTitaniumRecipe()

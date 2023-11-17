@@ -37,7 +37,7 @@ namespace CustomHotkeys
 		[Field.Action(typeof(HotkeyHider))]
 		public readonly bool showHidden = false;
 
-#if GAME_SN // BZ is using right click for that
+#if SUBNAUTICA // BZ is using right click for that
 		public readonly bool easyBindRemove = true;
 #endif
 		public readonly bool addConsoleCommands = true;
@@ -153,7 +153,7 @@ namespace CustomHotkeys
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
 		public readonly List<Hotkey> hotkeys = new()
 		{
-#if GAME_SN
+#if SUBNAUTICA
 			new() { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
 #endif
 #if DEBUG && !GENERATE_SAMPLE_CONFIG
@@ -172,7 +172,7 @@ namespace CustomHotkeys
 #else
 			new() { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
 			new() { command = "vehicle_enter", label = "Enter nearby vehicle" },
-#if GAME_BZ
+#if BELOWZERO
 			new() { command = "seatruck_forcedexit", label = "Exit from Seatruck" },
 			new() { command = "seatruck_dropmodules", label = "Detach modules from Seatruck" },
 #endif

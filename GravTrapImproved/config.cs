@@ -55,7 +55,7 @@ namespace GravTrapImproved
 		[Field.BindConsole("gt_mk2")]
 		public readonly float mk2MaxMassStable = 150f; // default: 15f
 
-#if GAME_SN
+#if SUBNAUTICA
 		public readonly float treaderChunkSpawnFactor = 1f;
 #endif
 		public readonly bool raysVisible = true;
@@ -120,7 +120,7 @@ namespace GravTrapImproved
 			new
 			(
 				"Creatures",
-#if GAME_SN
+#if SUBNAUTICA
 				TechType.Biter,
 				TechType.Bleeder,
 				TechType.CaveCrawler,
@@ -142,7 +142,7 @@ namespace GravTrapImproved
 				TechType.Reginald,
 				TechType.Spadefish,
 				TechType.Stalker,
-#elif GAME_BZ
+#elif BELOWZERO
 				TechType.ArcticPeeper,
 				TechType.ArcticRay,
 				TechType.ArrowRay,
@@ -168,12 +168,12 @@ namespace GravTrapImproved
 			new
 			(
 				"Resources",
-#if GAME_SN
+#if SUBNAUTICA
 				TechType.Bleach,
 				TechType.GasPod,
 				TechType.SandstoneChunk,
 				TechType.ShaleChunk,
-#elif GAME_BZ
+#elif BELOWZERO
 				TechType.BreakableGold,
 				TechType.BreakableLead,
 				TechType.BreakableSilver,
@@ -215,7 +215,7 @@ namespace GravTrapImproved
 			new
 			(
 				"Eggs",
-#if GAME_SN
+#if SUBNAUTICA
 				TechType.BonesharkEgg,
 				TechType.BonesharkEggUndiscovered,
 				TechType.CrabsnakeEgg,
@@ -248,7 +248,7 @@ namespace GravTrapImproved
 				TechType.SpadefishEggUndiscovered,
 				TechType.StalkerEgg,
 				TechType.StalkerEggUndiscovered,
-#elif GAME_BZ
+#elif BELOWZERO
 				TechType.ArcticRayEgg,
 				TechType.ArcticRayEggUndiscovered,
 				TechType.BrinewingEgg,
@@ -279,12 +279,12 @@ namespace GravTrapImproved
 				TechType.TrivalveYellowEgg,
 				TechType.TrivalveYellowEggUndiscovered,
 #endif
-#if GAME_BZ
+#if BELOWZERO
 #pragma warning disable CS0612 // for some reason it's marked obsolete in BZ
 #endif
 				TechType.CrashEgg,
 				TechType.CrashEggUndiscovered
-#if GAME_BZ
+#if BELOWZERO
 #pragma warning restore CS0612
 #endif
 			),
@@ -292,7 +292,7 @@ namespace GravTrapImproved
 			new
 			(
 				"Test",
-#if GAME_SN
+#if SUBNAUTICA
 				TechType.StalkerTooth,
 				TechType.TimeCapsule,
 				TechType.GasPod,

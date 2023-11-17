@@ -49,7 +49,7 @@ namespace UITweaks
 			if (Main.config.pdaTweaks.tabHotkeysEnabled && Main.config.showToolbarHotkeys)
 			{
 				KeyCode keycode = Main.config.pdaTweaks.tabHotkeys[(PDATab)(tabIndex + 1)];
-				string key = SMLHelper.V2.Utility.KeyCodeUtils.KeyCodeToString(keycode);
+				string key = Nautilus.Utility.KeyCodeUtils.KeyCodeToString(keycode);
 				tooltip = $"<size={tooltipTextSize}><color=#ADF8FFFF>{key}</color> - </size>{tooltip}";
 			}
 
@@ -118,28 +118,22 @@ namespace UITweaks
 		{
 			static bool prepare() => Main.config.pdaTweaks.enabled;
 
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "OnToolbarClick")]
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), nameof(uGUI_PDA.OnToolbarClick))]
 			static void toolbarClick(int index, int button)
 			{
 				if (Main.config.pdaTweaks.allowClearNotifications && button == 1)
 					removeNotifications(getGroupByTabIndex(index));
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "GetToolbarTooltip")]
-#if GAME_SN
-			static void getTooltip(int index, ref string tooltipText)
-			{
-				tooltipText = modifyTooltip(index, tooltipText);
-			}
-#elif GAME_BZ
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), nameof(uGUI_PDA.GetToolbarTooltip))]
 			static void getTooltip(int index, TooltipData data)
 			{
 				string tooltip = data.prefix.ToString();
 				data.prefix.Clear();
 				data.prefix.Append(modifyTooltip(index, tooltip));
 			}
-#endif
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "OnOpenPDA")]
+
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), nameof(uGUI_PDA.OnOpenPDA))]
 			static void openPDA()
 			{
 				// if tab hotkey is pressed before PDA is open it's probably to open storage slot, so we'll ignore first pressed key

@@ -39,11 +39,7 @@ namespace MiscPatches
 
 		static void removeDiveReelNode(DiveReel reel, DiveReelNode node)
 		{
-#if GAME_SN
-			reel.nodes.Remove(node.gameObject);
-#elif GAME_BZ
 			reel.nodes.Remove(node);
-#endif
 			node.DestroySelf(0.1f);
 			recalcNodes(reel);
 		}

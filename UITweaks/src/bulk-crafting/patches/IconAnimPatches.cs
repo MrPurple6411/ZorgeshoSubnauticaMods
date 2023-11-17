@@ -28,13 +28,13 @@ namespace UITweaks
 				return fasterAnim;
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_IconNotifier), "Awake")]
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_IconNotifier), nameof(uGUI_IconNotifier.Awake))]
 			static void init(uGUI_IconNotifier __instance)
 			{
 				initialAnimInterval = __instance.interval;
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_IconNotifier), "Play")]
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_IconNotifier), nameof(uGUI_IconNotifier.Play))]
 			static void changeAnimInterval(uGUI_IconNotifier __instance)
 			{
 				__instance.interval = Mathf.Min(maxAnimTime / __instance.queue.Count, initialAnimInterval);

@@ -52,7 +52,7 @@ namespace UITweaks.StorageTweaks
 		{
 			static bool prepare() => Main.config.storageTweaks.enabled;
 
-			[HarmonyPostfix, HarmonyPatch(typeof(StorageContainer), "Awake")]
+			[HarmonyPostfix, HarmonyPatch(typeof(StorageContainer), nameof(StorageContainer.Awake))]
 			static void StorageContainer_Awake_Postfix(StorageContainer __instance)
 			{
 				ensureHandlers(__instance);

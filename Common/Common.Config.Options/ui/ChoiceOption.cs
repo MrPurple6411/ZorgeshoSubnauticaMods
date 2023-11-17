@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using HarmonyLib;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
 
 namespace Common.Configuration
 {
@@ -67,12 +67,12 @@ namespace Common.Configuration
 			public override void addOption(Options options)
 			{
 				int defaultIndex = values?.findIndex(val => val.Equals(cfgField.value) || val.Equals(cfgField.value.convert<int>())) ?? cfgField.value.convert<int>();
-				options.AddChoiceOption(id, label, choices, defaultIndex < 0? 0: defaultIndex);
+				options.AddItem(ModChoiceOption<string>.Create(id, label, choices, defaultIndex < 0? 0: defaultIndex));
 			}
 
 			public override void onValueChange(EventArgs e)
 			{
-				int? index = (e as ChoiceChangedEventArgs)?.Index;
+				int? index = (e as ChoiceChangedEventArgs<string>)?.Index;
 				cfgField.value = values?[index ?? 0] ?? index;
 			}
 
@@ -84,7 +84,7 @@ namespace Common.Configuration
 
 				[HarmonyPrefix]
 				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchOnce)]
-				[HarmonyHelper.Patch("SMLHelper.V2.Options.Utility.Validator, SMLHelper", "ValidateID", typeof(string))]
+				[HarmonyHelper.Patch("Nautilus.Options.Utility.Validator, SMLHelper", "ValidateID", typeof(string))]
 				static bool validatorPrefix(string id) => id.IndexOf('.') == -1;
 			}
 		}

@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
-using SMLHelper.V2.Handlers;
+using Nautilus.Handlers;
 
 using Common;
 using Common.Harmony;
@@ -15,9 +15,9 @@ namespace PrawnSuitSettings
 
 		static void setEnergyCost(TechType techType, float energyCost)
 		{
-#if GAME_SN
+#if SUBNAUTICA
 			CraftData.energyCost[techType] = energyCost;
-#elif GAME_BZ
+#elif BELOWZERO
 			if (TechData.TryGetValue(techType, out JsonValue value))
 				value.setDouble(TechData.propertyEnergyCost, energyCost);
 #endif
@@ -29,7 +29,7 @@ namespace PrawnSuitSettings
 
 			setEnergyCost(TechType.ExosuitGrapplingArmModule, grapplingArmEnergyCost);
 
-			if (TechTypeHandler.TryGetModdedTechType("GrapplingArmUpgradeModule", out TechType upgradedGrapplingArm))
+			if (EnumHandler.TryGetValue("GrapplingArmUpgradeModule", out TechType upgradedGrapplingArm))
 				setEnergyCost(upgradedGrapplingArm, grapplingArmEnergyCost);
 
 			setEnergyCost(TechType.ExosuitTorpedoArmModule, Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.torpedoArm: 0f);
@@ -56,7 +56,7 @@ namespace PrawnSuitSettings
 				}
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")] // energy usage for grappling arm
+			[HarmonyPostfix, HarmonyPatch(typeof(ExosuitGrapplingArm), nameof(ExosuitGrapplingArm.FixedUpdate))] // energy usage for grappling arm
 			static void ExosuitGrapplingArm_FixedUpdate_Postfix(ExosuitGrapplingArm __instance)
 			{
 				const float sqrMagnitudeGrapplingArm = 16f; // if hook attached and its sqr length less than that, then don't consume power
@@ -65,12 +65,12 @@ namespace PrawnSuitSettings
 					if (!consumeArmEnergy(__instance, Main.config.armsEnergyUsage.grapplingArmPull))
 						(__instance as IExosuitArm).OnUseUp(out _);
 			}
-#if GAME_BZ
-			[HarmonyPostfix, HarmonyPatch(typeof(TechData), "Initialize")]
+#if BELOWZERO
+			[HarmonyPostfix, HarmonyPatch(typeof(TechData), nameof(TechData.Initialize))]
 			static void TechData_Initialize_Postfix() => refresh();
 #endif
 		}
-#if GAME_BZ
+#if BELOWZERO
 		static void setDouble(this JsonValue jv, int id, double val)
 		{
 			if (!jv.CheckType(JsonValue.Type.Object))

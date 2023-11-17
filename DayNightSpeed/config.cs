@@ -1,4 +1,4 @@
-﻿#if GAME_SN
+﻿#if SUBNAUTICA
 //#define CFG_UPDATE_V110
 //#define CFG_UPDATE_V120
 #define CFG_UPDATE_V131
@@ -57,7 +57,7 @@ namespace DayNightSpeed
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
-#if GAME_SN
+#if SUBNAUTICA
 		[Options.Field("Medkit fabrication", tooltipType: typeof(Tooltips.Medkit))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100, Range_001_100, HideableSpeed]
@@ -289,7 +289,7 @@ namespace DayNightSpeed
 								getDuration(growthDaysBigCreatures * dayNightSecs, Main.config.speedCreaturesGrow));
 			}
 			#endregion
-#if GAME_SN
+#if SUBNAUTICA
 			#region tooltip: speedMedkitInterval
 			partial class L10n
 			{

@@ -12,13 +12,9 @@ using Common.Configuration;
 
 namespace ConsoleImproved
 {
-#if GAME_SN
-	using Text = UnityEngine.UI.Text;
-#elif GAME_BZ
 	using Text = TMPro.TextMeshProUGUI;
-#endif
 
-	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
+	[HarmonyPatch(typeof(ErrorMessage), nameof(ErrorMessage.Awake))]
 	static class ErrorMessageSettings
 	{
 		static ModConfig.MessagesSettings defaultSettings;
@@ -39,7 +35,7 @@ namespace ConsoleImproved
 		static void Postfix(ErrorMessage __instance)
 		{
 			var em = __instance;
-			var text = em.prefabMessage.GetComponent<Text>(); // for GAME_SN it's just 'prefabMessage'
+			var text = em.prefabMessage.GetComponent<Text>(); // for SUBNAUTICA it's just 'prefabMessage'
 
 			defaultSettings ??= new ModConfig.MessagesSettings()
 			{
@@ -49,7 +45,7 @@ namespace ConsoleImproved
 				timeDelay = em.timeDelay,
 				timeFadeOut = em.timeFadeOut,
 				timeInvisible = em.timeInvisible,
-				fontSize = (int)text.fontSize, // in GAME_BZ 'fontSize' is float
+				fontSize = (int)text.fontSize, // in BELOWZERO 'fontSize' is float
 				textWidth = text.rectTransform.sizeDelta.x,
 				textLineSpacing = text.lineSpacing
 			};
@@ -109,11 +105,7 @@ namespace ConsoleImproved
 		{
 			static float _getYPos()
 			{
-#if GAME_SN
-				return ErrorMessage.main.GetYPos();
-#elif GAME_BZ
 				return ErrorMessage.main.GetYPos(-1, 1.0f);
-#endif
 			}
 
 			if (!ErrorMessage.main)
@@ -125,7 +117,7 @@ namespace ConsoleImproved
 	}
 
 	// don't clear onscreen messages while console is open
-	[OptionalPatch, HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
+	[OptionalPatch, HarmonyPatch(typeof(ErrorMessage), Mod.Consts.isGameBZ ? "OnUpdate" : "OnLateUpdate")]
 	static class ErrorMessage_OnUpdate_Patch
 	{
 		static bool Prepare() => Main.config.keepMessagesOnScreen;
@@ -154,7 +146,7 @@ namespace ConsoleImproved
 
 			if (i == null)
 				return cins;
-#if GAME_BZ
+#if BELOWZERO
 			CIHelper.LabelClipboard.__enabled = false;
 
 			// setting alpha to 1.0f

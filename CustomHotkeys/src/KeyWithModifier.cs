@@ -6,11 +6,7 @@ using UnityEngine;
 using Common;
 using Common.Reflection;
 
-#if GAME_SN && BRANCH_STABLE
-using Oculus.Newtonsoft.Json;
-#else
 using Newtonsoft.Json;
-#endif
 
 namespace CustomHotkeys
 {

@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
 
-#if GAME_SN
-	using _TechInfo = SMLHelper.V2.Crafting.TechData;
-#elif GAME_BZ
-	using _TechInfo = SMLHelper.V2.Crafting.RecipeData;
-#endif
+	using _TechInfo = Nautilus.Crafting.RecipeData;
 
 namespace Common.Crafting
 {
-	// intermediate class that used for conversion to/from SMLHelper's TechData (GAME_SN) or RecipeData (GAME_BZ)
+	// intermediate class that used for conversion to/from SMLHelper's TechData (SUBNAUTICA) or RecipeData (BELOWZERO)
 	class TechInfo
 	{
 		public record Ing(TechType techType, int amount = 1);
@@ -53,7 +49,7 @@ namespace Common.Crafting
 
 			return result;
 		}
-#if GAME_SN
+#if SUBNAUTICA
 		public static implicit operator CraftData.TechData(TechInfo techInfo)
 		{
 			CraftData.TechData result = new()

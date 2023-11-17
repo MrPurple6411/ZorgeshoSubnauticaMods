@@ -47,7 +47,7 @@ namespace UITweaks.StorageTweaks
 		}
 
 		[StorageHandler(TechType.SmallLocker)]
-#if GAME_BZ
+#if BELOWZERO
 		[StorageHandler(TechType.SeaTruckStorageModule)]
 		[StorageHandler(TechType.SeaTruckFabricatorModule)]
 #endif
@@ -73,9 +73,9 @@ namespace UITweaks.StorageTweaks
 			}
 		}
 
-#if GAME_SN
+#if SUBNAUTICA
 		[StorageHandler(TechType.LuggageBag)]
-#elif GAME_BZ
+#elif BELOWZERO
 		[StorageHandler(TechType.QuantumLocker)]
 #endif
 		[StorageHandler(TechType.SmallStorage)]

@@ -13,7 +13,7 @@ using Common.Reflection;
 namespace HabitatPlatform
 {
 	// don't allow to build foundations on the platform
-	[HarmonyPatch(typeof(Builder), "UpdateAllowed")]
+	[HarmonyPatch(typeof(Builder), nameof(Builder.UpdateAllowed))]
 	static class Builder_UpdateAllowed_Patch
 	{
 		static void Postfix(ref bool __result)
@@ -21,13 +21,13 @@ namespace HabitatPlatform
 			if (Builder.ghostModel?.GetComponent<BaseAddCellGhost>() is not BaseAddCellGhost cellGhost)
 				return;
 
-			if (cellGhost.cellType == Base.CellType.Foundation && cellGhost.targetBase?.GetComponentInParent<HabitatPlatform.Tag>())
+			if (cellGhost.GetCellType() == Base.CellType.Foundation && cellGhost.targetBase?.GetComponentInParent<HabitatPlatform.Tag>())
 				__result = false;
 		}
 	}
 
 	// checking if we trying to build Constructable on the platform (and adding constructed object to the platform's Base in that case)
-	[HarmonyPatch(typeof(Builder), "TryPlace")]
+	[HarmonyPatch(typeof(Builder), nameof(Builder.TryPlace))]
 	static class Builder_TryPlace_Patch
 	{
 		static void checkPlatform(GameObject gameObject)
@@ -92,10 +92,10 @@ namespace HabitatPlatform
 			}
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(BaseGhost), "FindBase")]
+		[HarmonyPostfix, HarmonyPatch(typeof(BaseGhost), nameof(BaseGhost.FindBase))]
 		static void BaseGhost_FindBase_Postfix(Base __result) => dirty = (lastBase != __result);
 
-		[HarmonyPostfix, HarmonyPatch(typeof(Builder), "GetOverlappedColliders")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Builder), nameof(Builder.GetOverlappedColliders))]
 		static void Builder_GetOverlappedColliders_Postfix(List<Collider> results)
 		{
 			if (!isHabitatPlatform)
@@ -107,7 +107,7 @@ namespace HabitatPlatform
 			results.RemoveAll(coll => ignoredColliders.Contains(coll));
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(SceneCleaner), "Open")]
+		[HarmonyPostfix, HarmonyPatch(typeof(SceneCleaner), nameof(SceneCleaner.Open))]
 		static void SceneCleaner_Open_Postfix() => ignoredColliders.Clear(); // clear on exit to main menu
 	}
 }

@@ -15,7 +15,13 @@ namespace ModsOptionsAdjusted
 			if (label == "Mods")
 				modsTabIndex = __result;
 
-			isMainMenu = (__instance.GetComponent<MainMenuOptions>() != null);
+			isMainMenu = (__instance.GetComponent<
+#if SUBNAUTICA
+				MainMenuPrimaryOption
+#elif BELOWZERO
+				MainMenuOptions
+#endif
+				>() != null);
 		}
 	}
 }

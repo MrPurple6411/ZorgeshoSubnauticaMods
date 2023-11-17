@@ -38,7 +38,7 @@ namespace DayNightSpeed
 		}
 		static bool _forcedNormalSpeed = false;
 
-		[HarmonyPostfix, HarmonyPatch(typeof(DayNightCycle), "Awake")]
+		[HarmonyPostfix, HarmonyPatch(typeof(DayNightCycle), nameof(DayNightCycle.Awake))]
 		static void initDayNightCycle(DayNightCycle __instance)
 		{
 			__instance._dayNightSpeed = Main.config.dayNightSpeed;
@@ -46,7 +46,7 @@ namespace DayNightSpeed
 			StoryGoalsListener.load(); // need load that after DayNightCycle is created
 
 			// unregistering vanilla daynightspeed console command, replacing it with ours in DayNightSpeedControl
-			NotificationCenter.DefaultCenter.RemoveObserver(__instance, "OnConsoleCommand_daynightspeed");
+			DevConsole.commands.Remove("daynightspeed");
 		}
 
 		public static float getActualSpeed()

@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
 
-#if GAME_BZ
+#if BELOWZERO
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -16,7 +16,7 @@ namespace Common.Configuration
 {
 	using Reflection;
 
-#if GAME_BZ
+#if BELOWZERO
 	using Harmony;
 #endif
 
@@ -27,7 +27,7 @@ namespace Common.Configuration
 			public static class SliderValue
 			{
 				interface IConfigFieldInfo { void setConfigField(Config.Field cfgField); }
-#if GAME_BZ
+#if BELOWZERO
 				// patch for disabling callbacks on changed values for sliders
 				// needed only for NonLinear custom slider value for now (both converters are overrided)
 				static class SliderCallbackPatch
@@ -37,7 +37,7 @@ namespace Common.Configuration
 #pragma warning restore IDE0052
 					public static bool callbacksEnabled = true;
 
-					[HarmonyPrefix, HarmonyPatch(typeof(uGUI_SnappingSlider), "Set")]
+					[HarmonyPrefix, HarmonyPatch(typeof(uGUI_SnappingSlider), nameof(uGUI_SnappingSlider.Set))]
 					static void callbackDisabler(ref bool sendCallback) => sendCallback &= callbacksEnabled;
 
 					// patch for saving slider value before changing min/max values
@@ -62,7 +62,7 @@ namespace Common.Configuration
 						return list;
 					}
 				}
-#endif // GAME_BZ
+#endif // BELOWZERO
 				public class Add: ModOption.IOnGameObjectChangeHandler
 				{
 					readonly Type valueCmpType;
@@ -87,7 +87,7 @@ namespace Common.Configuration
 					public void handle(GameObject gameObject)
 					{
 						GameObject slider = gameObject.transform.Find("Slider").gameObject;
-#if GAME_BZ
+#if BELOWZERO
 						slider.destroyComponent<ModSliderOption.SliderValue>(); // SMLHelper for BZ adds this component for any slider :(
 #endif
 						Component valueType = slider.AddComponent(valueCmpType);
@@ -121,8 +121,7 @@ namespace Common.Configuration
 					}
 
 					static readonly PropertyWrapper sliderValue = Type.GetType("UnityEngine.UI.Slider, UnityEngine.UI").property("value").wrap();
-					static readonly PropertyWrapper text =
-						Type.GetType(Mod.Consts.isGameSN? "UnityEngine.UI.Text, UnityEngine.UI": "TMPro.TextMeshProUGUI, Unity.TextMeshPro").property("text").wrap();
+					static readonly PropertyWrapper text = Type.GetType("TMPro.TextMeshProUGUI, Unity.TextMeshPro").property("text").wrap();
 
 					object _slider, _label;
 
@@ -147,7 +146,7 @@ namespace Common.Configuration
 					readonly List<(float sliderValue, string formatBefore, string formatAfter)> valueFormats = new();
 
 					public override float ValueWidth => 0f;
-#if GAME_BZ
+#if BELOWZERO
 					protected override void Awake()
 					{
 						SliderCallbackPatch.callbacksEnabled = false;

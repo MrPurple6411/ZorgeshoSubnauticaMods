@@ -9,10 +9,10 @@ namespace MiscObjects
 	{
 		protected override TechInfo getTechInfo() => new
 		(
-#if GAME_SN
+#if SUBNAUTICA
 			new (TechType.CuredPeeper),
 			new (TechType.CuredReginald),
-#elif GAME_BZ
+#elif BELOWZERO
 			new (TechType.CuredArcticPeeper, 2),
 			new (TechType.SmallMaroonPlantFruit),
 #endif
@@ -40,9 +40,9 @@ namespace MiscObjects
 		public override void patch()
 		{
 			register("Craftable nutrient block", "Nutrient block cooked from local ingridients. Less nutritious and more salty than original.");
-#if GAME_SN
+#if SUBNAUTICA
 			addToGroup(TechGroup.Survival, TechCategory.CookedFood);
-#elif GAME_BZ
+#elif BELOWZERO
 			addToGroup(TechGroup.Survival, TechCategory.FoodAndDrinks);
 #endif
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Survival" + (Mod.Consts.isGameSN? "": "/CookedFood"));

@@ -5,10 +5,10 @@ namespace StasisModule
 {
 	static class L10n
 	{
-#if GAME_SN
+#if SUBNAUTICA
 		public const string ids_seamothSM_Name = "Seamoth stasis module";
 		public const string ids_seamothSM_Desc = "Generates a stationary stasis field around the Seamoth.";
-#elif GAME_BZ
+#elif BELOWZERO
 		public const string ids_seatruckSM_Name = "Seatruck stasis module";
 		public const string ids_seatruckSM_Desc = "Generates a stationary stasis field around the Seatruck.";
 #endif
@@ -31,7 +31,7 @@ namespace StasisModule
 			register(name, description, SpriteHelper.getSprite("stasismodule"));
 	}
 
-#if GAME_SN
+#if SUBNAUTICA
 	class SeaMothStasisModule: StasisModule
 	{
 		public static new TechType TechType { get; private set; } = 0;
@@ -48,7 +48,7 @@ namespace StasisModule
 			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.Seamoth);
 		}
 	}
-#elif GAME_BZ
+#elif BELOWZERO
 	class SeaTruckStasisModule: StasisModule
 	{
 		public static new TechType TechType { get; private set; } = 0;
@@ -79,9 +79,9 @@ namespace StasisModule
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules", TechType.ExosuitThermalReactorModule);
 
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Instant);
-#if GAME_SN
+#if SUBNAUTICA
 			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.Exosuit);
-#elif GAME_BZ
+#elif BELOWZERO
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.ExosuitThermalReactorModule);
 			setTechTypeForUnlock(TechType.Exosuit);
 #endif

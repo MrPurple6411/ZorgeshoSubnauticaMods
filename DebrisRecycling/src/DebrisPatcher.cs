@@ -16,6 +16,11 @@ namespace DebrisRecycling
 			return gameObject.GetComponentInChildren<Rigidbody>()?.isKinematic == false;
 		}
 
+		public bool IsDeconstructionObstacle()
+		{
+			return true;
+		}
+
 		public void OnConstructedChanged(bool constructed) => DebrisTracker.untrack(gameObject);
 	}
 

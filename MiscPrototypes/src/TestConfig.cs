@@ -272,7 +272,7 @@ namespace MiscPrototypes
 #endif
 
 #if TEST_CUSTOM_VALUE
-		class CustomSliderValue: SMLHelper.V2.Options.ModSliderOption.SliderValue
+		class CustomSliderValue: Nautilus.Options.ModSliderOption.SliderValue
 		{
 			protected override void UpdateLabel()
 			{

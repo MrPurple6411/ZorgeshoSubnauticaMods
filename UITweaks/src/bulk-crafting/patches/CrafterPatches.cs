@@ -21,21 +21,21 @@ namespace UITweaks
 			static readonly Dictionary<CrafterLogic, TechInfo> crafterCache = new();
 
 			[HarmonyPriority(Priority.HigherThanNormal)] // just in case
-			[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), "Craft")]
+			[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), nameof(Crafter.Craft))]
 			static void craftFixDuration(TechType techType, ref float duration)
 			{
 				if (Main.config.bulkCrafting.changeCraftDuration && isAmountChanged(techType))
 					duration *= currentCraftAmount;
 			}
 
-			[HarmonyPrefix, HarmonyPatch(typeof(CrafterLogic), "Craft")]
+			[HarmonyPrefix, HarmonyPatch(typeof(CrafterLogic), nameof(CrafterLogic.Craft))]
 			static void craftUpdateCache(CrafterLogic __instance, TechType techType)
 			{
 				if (isAmountChanged(techType))
 					crafterCache[__instance] = currentTechInfo;
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), "Craft")]
+			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), nameof(CrafterLogic.Craft))]
 			static void craftFixAmount(CrafterLogic __instance, TechType techType)
 			{
 				if (isAmountChanged(techType) && originalTechInfo.craftAmount == 0)
@@ -43,7 +43,7 @@ namespace UITweaks
 			}
 
 			[HarmonyPriority(Priority.HigherThanNormal)]
-			[HarmonyPrefix, HarmonyHelper.Patch(typeof(GhostCrafter), "Craft")]
+			[HarmonyPrefix, HarmonyHelper.Patch(typeof(GhostCrafter), nameof(GhostCrafter.Craft))]
 			static void craftFixEnergyConsumption(GhostCrafter __instance, TechType techType)
 			{
 				if (!Main.config.bulkCrafting.changePowerConsumption)
@@ -53,14 +53,12 @@ namespace UITweaks
 					CrafterLogic.ConsumeEnergy(__instance.powerRelay, (currentCraftAmount - 1) * 5f); // and 5f also consumed in the vanilla method
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), Mod.Consts.isGameSN? "Reset": "ResetCrafter")]
+			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), nameof(CrafterLogic.ResetCrafter))]
 			static void reset(CrafterLogic __instance) => crafterCache.Remove(__instance);
 
 			[HarmonyTranspiler]
-			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.Consts.isGameSNStable? "TryPickup": "TryPickupAsync")]
-#if !(GAME_SN && BRANCH_STABLE)
+			[HarmonyHelper.Patch(typeof(CrafterLogic), nameof(CrafterLogic.TryPickupAsync))]
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
-#endif
 			static IEnumerable<CodeInstruction> fixLinkedItemCount(IEnumerable<CodeInstruction> cins)
 			{
 				var list = cins.ToList();
@@ -68,9 +66,19 @@ namespace UITweaks
 				CIHelper.MemberMatch stfld_numCrafted = new (OpCodes.Stfld, nameof(CrafterLogic.numCrafted));
 				int index = list.ciFindIndexForLast(stfld_numCrafted, stfld_numCrafted);
 
+				if (index == -1)
+				{
+					"fixLinkedItemCount: can't find stfld CrafterLogic.numCrafted".logError();
+
+					// Logs all the instructions in the method
+					cins.ToList().ForEach(ci => $"{ci}".logError());
+
+					return cins;
+				}
+
 				return index == -1? cins:
 					list.ciReplace(index - 1,
-						Mod.Consts.isGameSNStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
+						OpCodes.Ldloc_1,
 						CIHelper.emitCall<Func<CrafterLogic, int>>(_getNumCrafted));
 
 				static int _getNumCrafted(CrafterLogic instance) =>

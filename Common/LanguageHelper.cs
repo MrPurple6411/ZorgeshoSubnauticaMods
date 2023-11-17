@@ -61,7 +61,7 @@ namespace Common
 
 		// using this to avoid including SMLHelper as a reference to Common project
 		static readonly MethodWrapper<Action<string, string>> addString =
-			Type.GetType("SMLHelper.V2.Handlers.LanguageHandler, SMLHelper")?.method("SetLanguageLine")?.wrap<Action<string, string>>();
+			Type.GetType("Nautilus.Handlers.LanguageHandler, SMLHelper")?.method("SetLanguageLine")?.wrap<Action<string, string>>();
 
 
 		static Dictionary<string, string> substitutedStrings = null; // 'key' string using value of 'value' string
@@ -79,7 +79,7 @@ namespace Common
 		}
 
 		[HarmonyPriority(Priority.Low)]
-		[HarmonyPostfix, HarmonyHelper.Patch(typeof(Language), "LoadLanguageFile")]
+		[HarmonyPostfix, HarmonyHelper.Patch(typeof(Language), nameof(Language.LoadLanguageFile))]
 		static void substituteStrings(Language __instance) =>
 			substitutedStrings.forEach(subst => __instance.strings[subst.Key] = __instance.strings[subst.Value]);
 	}

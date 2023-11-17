@@ -180,7 +180,7 @@ namespace DebrisRecycling
 			_updateTo110();
 		}
 
-		[AddPrefabList(Mod.Consts.isDevBuild? "<color=#a0a0a0>debrisCargoOpened</color>": null)]
+		[AddPrefabList("<color=#a0a0a0>debrisCargoOpened</color>")]
 		public readonly PrefabList dbsCargoOpened = new (true, new()
 		{
 			{"Starship_cargo_opened.c390fcfc-3bf4-470a-93bf-39dafb8b2267", 2},
@@ -191,7 +191,7 @@ namespace DebrisRecycling
 			{"Starship_cargo_damaged_opened_large_02.fb2886c4-7e03-4a47-a122-dc7242e7de5b", 10},
 		});
 
-		[AddPrefabList(Mod.Consts.isDevBuild? "<color=#a0a0a0>debrisMiscMovable</color>": null)]
+		[AddPrefabList("<color=#a0a0a0>debrisMiscMovable</color>")]
 		public readonly PrefabList dbsMiscMovable = new (true, new()
 		{
 			{"Starship_exploded_debris_01.5cd34124-935f-4628-b694-a266bc2f5517", 11},
@@ -241,7 +241,7 @@ namespace DebrisRecycling
 			{"Bench_deco.2e9b9389-cfa3-45b1-aee8-ea66b90e841d", 10},
 		});
 
-		[AddPrefabList(Mod.Consts.isDevBuild? "<color=#a0a0a0>debrisTech</color>": null)]
+		[AddPrefabList("<color=#a0a0a0>debrisTech</color>")]
 		public readonly PrefabList dbsTech = new (false, new()
 		{
 			{"tech_light_deco.8ce870ba-b559-45d7-9c10-a5477967db24", 2},				// special processing
@@ -249,11 +249,10 @@ namespace DebrisRecycling
 			{"Starship_tech_box_01_03.c5d27b10-b02e-4063-9819-584dbfb721fa", 1},
 			{"descent_trashcans_01.386f311e-0d93-44cf-a180-f388820cb35b", 1},			// special processing
 			{"VendingMachine.40e2a610-19dc-4ae8-b0c1-816230ab1ce3", 2},					// special processing
-			//{"generic_forklift.13d0fb01-2957-49e0-b153-6dc88332694c", 12},
-			//{"submarine_engine_console_01.38b89b53-2506-4f90-aaaa-2f0174e6425f", 10},
+			{"generic_forklift.13d0fb01-2957-49e0-b153-6dc88332694c", 12},
+			{"submarine_engine_console_01.38b89b53-2506-4f90-aaaa-2f0174e6425f", 10},
 		});
 
-#if DEBUG
 		[AddPrefabList("<color=#a0a0a0>debrisStatic</color>")]
 		public readonly PrefabList dbsStatic = new (false, new()
 		{
@@ -289,7 +288,7 @@ namespace DebrisRecycling
 			{"starship_girder_04.5cf44d20-ab07-4787-994b-35c2fd061959", 10},
 			{"starship_girder_09.7ec3cd94-4981-4877-be57-e7bfdfbbce00", 10},
 		});
-#endif
+
 		[AddPrefabList("Deconstruct custom objects")]
 		public readonly PrefabList dbsCustom = new (true, new());
 

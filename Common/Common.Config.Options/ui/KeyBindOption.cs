@@ -1,7 +1,7 @@
 ﻿using System;
 
 using UnityEngine;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
 
 namespace Common.Configuration
 {
@@ -31,12 +31,12 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				options.AddKeybindOption(id, label, GameInput.Device.Keyboard, cfgField.value.convert<KeyCode>());
+				options.AddItem(ModKeybindOption.Create(id, label, GameInput.Device.Keyboard, cfgField.value.convert<KeyCode>()));
 			}
 
 			public override void onValueChange(EventArgs e)
 			{
-				cfgField.value = (e as KeybindChangedEventArgs)?.Key;
+				cfgField.value = (e as KeybindChangedEventArgs)?.Value;
 			}
  		}
 	}

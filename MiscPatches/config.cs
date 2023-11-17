@@ -70,7 +70,7 @@ namespace MiscPatches
 		[Field.Action(typeof(UpdateOptionalPatches))]
 		public readonly bool useEatSounds = false;
 
-#if GAME_BZ
+#if BELOWZERO
 		public readonly bool pickupNonEmptyStorages = true;
 
 		[Field.Action(typeof(UpdateOptionalPatches))]
@@ -115,7 +115,7 @@ namespace MiscPatches
 
 			public class FastStart
 			{
-#if GAME_SN
+#if SUBNAUTICA
 				class Hider: Options.Components.Hider.Simple
 				{ public Hider(): base("dbg.fastStart.loadEscapePod", () => Main.config.dbg.fastStart.enabled) {} }
 
@@ -124,14 +124,14 @@ namespace MiscPatches
 				[Options.Field("Fast start")]
 				[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 				public readonly bool enabled = false;
-#if GAME_SN
+#if SUBNAUTICA
 				[Options.Field("\tLoad escape pod")]
 				[Options.Hideable(typeof(Hider))]
 				public readonly bool loadEscapePod = false;
 #endif
 				public readonly string[] commandsAfterLoad =
 				{
-#if GAME_BZ
+#if BELOWZERO
 					"day"
 #endif
 				};

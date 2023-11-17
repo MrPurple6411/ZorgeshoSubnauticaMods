@@ -34,7 +34,7 @@ namespace UITweaks.StorageTweaks
 		{
 			static bool prepare() => tweakEnabled;
 
-			[HarmonyTranspiler, HarmonyPatch(typeof(StorageContainer), "OnHandHover")]
+			[HarmonyTranspiler, HarmonyPatch(typeof(StorageContainer), nameof(StorageContainer.OnHandHover))]
 			static IEnumerable<CodeInstruction> StorageContainer_OnHandHover_Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				static void _updateAndProcessActions(StorageContainer instance)
@@ -67,7 +67,7 @@ namespace UITweaks.StorageTweaks
 					UnityHelper.FindObjectsOfTypeAll<T>().forEach(cmp => setColliderEnabled(cmp, enabled));
 				}
 
-				[HarmonyPostfix, HarmonyPatch(typeof(ColoredLabel), "OnEnable")]
+				[HarmonyPostfix, HarmonyPatch(typeof(ColoredLabel), nameof(ColoredLabel.OnEnable))]
 				static void ColoredLabel_OnEnable_Postfix(ColoredLabel __instance)
 				{
 					if (StorageHandlerProcessor.hasHandlers(Utils.getPrefabClassId(__instance)))
@@ -75,7 +75,7 @@ namespace UITweaks.StorageTweaks
 				}
 
 				[HarmonyPrefix, HarmonyPriority(Priority.Low)]
-				[HarmonyPatch(typeof(PickupableStorage), "OnHandHover")]
+				[HarmonyPatch(typeof(PickupableStorage), nameof(PickupableStorage.OnHandHover))]
 				static bool PickupableStorage_OnHandHover_Prefix(PickupableStorage __instance)
 				{
 					setColliderEnabled(__instance, false);

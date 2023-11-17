@@ -23,7 +23,7 @@ namespace Common.Stasis
 			{
 				if (target.GetComponent<Vehicle>())
 					return true;
-#if GAME_BZ
+#if BELOWZERO
 				if (target.GetComponent<SeaTruckSegment>())
 					return true;
 #endif

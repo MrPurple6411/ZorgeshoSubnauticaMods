@@ -3,7 +3,7 @@
 using Common;
 using Common.Harmony;
 
-#if GAME_SN
+#if SUBNAUTICA
 using UnityEngine;
 using UnityEngine.UI;
 #endif
@@ -17,47 +17,31 @@ namespace UITweaks
 		{
 			static bool prepare()
 			{
-#if GAME_SN
-				if (Main.config.bulkCrafting.enabled)
-					init(uGUI_Tooltip.main); // in case we enable it after tooltip awake
-				else
-					setActionText(AmountActionHint.None);
-#endif
 				return Main.config.bulkCrafting.enabled;
 			}
 
 			static CraftTree.Type currentTreeType;
-#if GAME_SN
-			// prevents SMLHelper from restoring techdata to original state (for modded items)
-			[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
-			static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
-
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Awake")]
-			static void awakePatch(uGUI_Tooltip __instance) => init(__instance);
-
-			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_Tooltip), "Set")]
-			static void resetText() => setActionText(AmountActionHint.None);
+#if SUBNAUTICA
+			// prevents Nautilus from restoring techdata to original state (for modded items)
+			[HarmonyPrefix, HarmonyHelper.Patch("Nautilus.Patchers.CraftDataPatcher, Nautilus", "NeedsPatchingCheckPrefix")]
+			static bool NautilusPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
 #endif
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "OnUpdate")]
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), nameof(uGUI_Tooltip.OnUpdate))]
 			static void checkVisible()
 			{
 				if (!uGUI_Tooltip.visible && currentTechType != TechType.None)
 					reset();
 			}
 
-			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
+			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), nameof(uGUI_CraftingMenu.Open))]
 			static void openCraftingMenu(CraftTree.Type treeType, ITreeActionReceiver receiver)
 			{
 				currentTreeType = treeType;
 				currentPowerRelay = Main.config.bulkCrafting.changePowerConsumption? (receiver as GhostCrafter)?.powerRelay: null;
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), Mod.Consts.isGameSN? "Recipe": "CraftRecipe")]
-#if GAME_SN
-			static void updateRecipe(TechType techType)
-#elif GAME_BZ
+			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), nameof(TooltipFactory.CraftRecipe))]
 			static void updateRecipe(TechType techType, TooltipData data)
-#endif
 			{
 				if (currentTreeType == CraftTree.Type.Constructor)
 					return;
@@ -69,36 +53,32 @@ namespace UITweaks
 					init(techType);
 
 				changeAmount(InputHelper.getMouseWheelDir());
-#if GAME_SN
-				updateActionHint();
-#elif GAME_BZ
 				string action = getActionText();
 				if (action != "")
 					data.postfix.AppendLine(action);
-#endif
 			}
-#if GAME_SN
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")]
-			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing) // TODO BRANCH_EXP: most of this code is unneeded on exp branch
-			{
-				const float tooltipOffsetX = 30f;
+//#if SUBNAUTICA
+//			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), nameof(uGUI_Tooltip.Rebuild))]
+//			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing) // TODO BRANCH_EXP: most of this code is unneeded on exp branch
+//			{
+//				const float tooltipOffsetX = 30f;
 
-				if (text.text == "" || executing != CanvasUpdate.Layout)
-					return;
+//				if (text.text == "" || executing != CanvasUpdate.Layout)
+//					return;
 
-				float tooltipHeight = -__instance.rectTransform.rect.y;
-				float textHeight = text.rectTransform.sizeDelta.y;
-				__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tooltipHeight + textHeight);
+//				float tooltipHeight = -__instance.rectTransform.rect.y;
+//				float textHeight = text.rectTransform.sizeDelta.y;
+//				__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tooltipHeight + textHeight);
 
-				float tooltipWidth = __instance.rectTransform.rect.xMax;
-				float textWidth = text.rectTransform.sizeDelta.x + tooltipOffsetX;
-				if (tooltipWidth < textWidth)
-					__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textWidth);
+//				float tooltipWidth = __instance.rectTransform.rect.xMax;
+//				float textWidth = text.rectTransform.sizeDelta.x + tooltipOffsetX;
+//				if (tooltipWidth < textWidth)
+//					__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textWidth);
 
-				float textPosY = __instance.iconCanvas.transform.localPosition.y -__instance.iconCanvas.rectTransform.sizeDelta.y;
-				text.rectTransform.localPosition = new Vector2(textPosX, textPosY);
-			}
-#endif
+//				float textPosY = __instance.iconCanvas.transform.localPosition.y -__instance.iconCanvas.rectTransform.sizeDelta.y;
+//				text.rectTransform.localPosition = new Vector2(textPosX, textPosY);
+//			}
+//#endif
 		}
 	}
 }

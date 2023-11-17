@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
-using SMLHelper.V2.Handlers;
+using Nautilus.Handlers;
 
 using Common;
 using Common.Crafting;
@@ -15,7 +15,7 @@ namespace DebrisRecycling
 		protected override TechInfo getTechInfo()  => null;
 		public override GameObject getGameObject() => null;
 
-		public override void patch() => TechType = register(L10n.ids_salvageableDebris, "", TechType.ScrapMetal);
+		public override void patch() => TechType = register("ids_salvageableDebris", L10n.ids_salvageableDebris, TechType.ScrapMetal);
 	}
 
 

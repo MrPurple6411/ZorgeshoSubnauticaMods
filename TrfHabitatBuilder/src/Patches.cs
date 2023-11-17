@@ -15,11 +15,11 @@ namespace TrfHabitatBuilder
 	static class BuilderToolPatches
 	{
 		[HarmonyPrefix]
-		[HarmonyPatch(typeof(BuilderTool), "Start")]
-		[HarmonyPatch(typeof(BuilderTool), "OnDisable")]
+		[HarmonyPatch(typeof(BuilderTool), nameof(BuilderTool.Start))]
+		[HarmonyPatch(typeof(BuilderTool), nameof(BuilderTool.OnDisable))]
 		static bool BuilderTool_Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
 
-		[HarmonyPrefix, HarmonyPatch(typeof(BuilderTool), "LateUpdate")]
+		[HarmonyPrefix, HarmonyPatch(typeof(BuilderTool), nameof(BuilderTool.LateUpdate))]
 		static bool BuilderTool_LateUpdate_Prefix(BuilderTool __instance)
 		{
 			TrfBuilderControl tbc = __instance.gameObject.GetComponent<TrfBuilderControl>();
@@ -32,7 +32,7 @@ namespace TrfHabitatBuilder
 
 		static readonly string trfBuilderToolName = nameof(TrfBuilder).ToLower();
 
-		[HarmonyPrefix, HarmonyPatch(typeof(QuickSlots), "SetAnimationState")]
+		[HarmonyPrefix, HarmonyPatch(typeof(QuickSlots), nameof(QuickSlots.SetAnimationState))]
 		static bool QuickSlots_SetAnimationState_Prefix(QuickSlots __instance, string toolName)
 		{
 			if (toolName != trfBuilderToolName)
@@ -63,14 +63,14 @@ namespace TrfHabitatBuilder
 		static bool prepare() => Main.config.limitBlueprints && Main.config.tabLockFix;
 
 		// locking tabs for hotkeys
-		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_BuilderMenu), "SetCurrentTab")]
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_BuilderMenu), nameof(uGUI_BuilderMenu.SetCurrentTab))]
 		static bool uGUI_BuilderMenu_SetCurrentTab_Prefix(int index)
 		{
 			return !Main.config.lockedTabs.get(GameUtils.getHeldToolType()).Contains(index);
 		}
 
 		// locking tabs for gamepad
-		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_BuilderMenu), "OnButtonDown")]
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_BuilderMenu), nameof(uGUI_BuilderMenu.OnButtonDown))]
 		static bool uGUI_BuilderMenu_OnButtonDown_Prefix(uGUI_BuilderMenu __instance, GameInput.Button button)
 		{
 			int dir = button switch
@@ -98,7 +98,7 @@ namespace TrfHabitatBuilder
 	}
 
 	// patch for locking tabs in the builder menu based on helded builder
-	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "Show")]
+	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), nameof(uGUI_BuilderMenu.Show))]
 	static class uGUIBuilderMenu_Show_Patch
 	{
 		static bool Prepare() => Main.config.limitBlueprints;
@@ -146,7 +146,7 @@ namespace TrfHabitatBuilder
 	}
 
 	// patch for locking blueprints based on helded builder
-	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "UpdateItems")]
+	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), nameof(uGUI_BuilderMenu.UpdateItems))]
 	static class uGUIBuilderMenu_UpdateItems_Patch
 	{
 		static bool Prepare() => Main.config.limitBlueprints;
@@ -194,7 +194,7 @@ namespace TrfHabitatBuilder
 	#region debug patches
 #if DEBUG
 	// for debugging
-	[HarmonyPatch(typeof(Constructable), "GetConstructInterval")]
+	[HarmonyPatch(typeof(Constructable), nameof(Constructable.GetConstructInterval))]
 	static class Constructable_GetConstructInterval_Patch
 	{
 		static bool Prefix(ref float __result)

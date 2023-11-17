@@ -38,7 +38,7 @@ namespace MiscPatches
 			}));
 	}
 
-#if GAME_SN
+#if SUBNAUTICA
 	[PatchClass]
 	static class PrawnSuitLightsToggle // mostly from RandyKnapp's PrawnSuitLightSwitch mod
 	{
@@ -97,7 +97,7 @@ namespace MiscPatches
 
 			bool isCanTakeDamage() =>
 				!vehicle || (!vehicle.GetRecentlyUndocked() &&
-#if GAME_SN
+#if SUBNAUTICA
 				!vehicle.precursorOutOfWater &&
 #endif
 				!vehicle.docked && !vehicle.IsInsideAquarium());
@@ -118,7 +118,7 @@ namespace MiscPatches
 		}
 	}
 
-#if GAME_SN
+#if SUBNAUTICA
 	// Hide extra quick slots in vehicles
 	// Modules installed in these slots working as usual
 	// Intended for passive modules, issues with selectable modules

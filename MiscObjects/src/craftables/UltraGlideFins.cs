@@ -1,4 +1,4 @@
-﻿#if GAME_BZ
+﻿#if BELOWZERO
 using HarmonyLib;
 
 using Common.Harmony;
@@ -80,4 +80,4 @@ namespace MiscObjects
 		}
 	}
 }
-#endif // GAME_BZ
+#endif // BELOWZERO

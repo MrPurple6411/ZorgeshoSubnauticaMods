@@ -25,7 +25,7 @@ namespace ConsoleImproved
 		{
 			PersistentConsoleCommands.register<ConsoleCommands>();
 
-#if GAME_SN && BRANCH_STABLE
+#if SUBNAUTICA && BRANCH_STABLE
 			DevConsole.disableConsole = !Main.config.consoleEnabled;
 #else
 			PlatformUtils.SetDevToolsEnabled(Main.config.consoleEnabled);

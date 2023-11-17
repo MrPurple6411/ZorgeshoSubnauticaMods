@@ -18,7 +18,7 @@ namespace UITweaks.StorageTweaks
 		{
 			static bool prepare() => tweakEnabled;
 
-			[HarmonyTranspiler, HarmonyPatch(typeof(StorageContainer), "OnHandHover")]
+			[HarmonyTranspiler, HarmonyPatch(typeof(StorageContainer), nameof(StorageContainer.OnHandHover))]
 			static IEnumerable<CodeInstruction> StorageContainer_OnHandHover_Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				static void _updateContentsInfo(StorageContainer instance) =>

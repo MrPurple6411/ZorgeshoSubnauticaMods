@@ -1,11 +1,14 @@
-﻿using Common;
+﻿using BepInEx;
+using Common;
 using Common.Harmony;
 
 namespace RenameBeacons
 {
-	public static class Main
+	[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+	[BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+	public class Main: BaseUnityPlugin
 	{
-		public static void patch()
+		public void Awake()
 		{
 			HarmonyHelper.patchAll();
 			LanguageHelper.init();

@@ -88,9 +88,6 @@ namespace MiscPatches
 
 			// can't change it just once, stingers use three LiveMixinData (short, middle, long)
 			liveMixin.data.destroyOnDeath = true;
-#if GAME_SN
-			liveMixin.data.explodeOnDestroy = false;
-#endif
 			liveMixin.data.deathEffect = deathEffect;
 			liveMixin.data.maxHealth = maxHealth;
 
@@ -114,7 +111,7 @@ namespace MiscPatches
 		[HarmonyPrefix, HarmonyPatch(typeof(Player), "AddUsedTool")]
 		static bool Player_AddUsedTool_Prefix(ref bool __result) => __result = false;
 
-#if GAME_SN
+#if SUBNAUTICA
 		[HarmonyPrefix, HarmonyPatch(typeof(EscapePod), "Awake")]
 		static void EscapePod_Awake_Prefix(EscapePod __instance) => __instance.bottomHatchUsed = __instance.topHatchUsed = true;
 #endif
@@ -198,7 +195,7 @@ namespace MiscPatches
 		static void Prefix(ref bool cameraInside) => cameraInside = false;
 	}
 
-#if GAME_BZ
+#if BELOWZERO
 	[OptionalPatch, HarmonyPatch(typeof(Builder), "Begin")]
 	static class BuidlerRepeatPatch
 	{
@@ -248,7 +245,7 @@ namespace MiscPatches
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
 			cins.ciRemove(new CIHelper.MemberMatch(nameof(QuickSlots.Select)), -2, 3);
 	}
-#if GAME_BZ
+#if BELOWZERO
 	// disable various eat sounds
 	[OptionalPatch, HarmonyPatch(typeof(TechSoundData), "GetUseSound")]
 	static class TechSoundData_GetUseSound_Patch
@@ -306,7 +303,7 @@ namespace MiscPatches
 	{
 		public static void init()
 		{
-#if GAME_SN
+#if SUBNAUTICA
 			CraftData.useEatSound.Add(TechType.Coffee, "event:/player/drink");
 #endif
 		}

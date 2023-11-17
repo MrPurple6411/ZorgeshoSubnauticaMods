@@ -1,4 +1,4 @@
-﻿#if GAME_SN
+﻿#if SUBNAUTICA
 using UnityEngine;
 using Common.Crafting;
 

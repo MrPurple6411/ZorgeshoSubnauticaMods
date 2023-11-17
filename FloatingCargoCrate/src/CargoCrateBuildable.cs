@@ -21,9 +21,9 @@ namespace FloatingCargoCrate
 			TechType = register(L10n.ids_crateName, L10n.ids_crateDesc);
 
 			setTechTypeForUnlock(TechType.AirBladder);
-#if GAME_SN
+#if SUBNAUTICA
 			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther);
-#elif GAME_BZ
+#elif BELOWZERO
 			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorModule);
 #endif
 		}
@@ -58,16 +58,12 @@ namespace FloatingCargoCrate
 			prefab.destroyComponent<FPModel>();
 
 			prefab.destroyComponent<LiveMixin>();
-#if GAME_SN
+#if SUBNAUTICA
 			prefab.destroyComponentInChildren<SmallStorage>();
 #endif
 
 			var storageContainer = PrefabUtils.initStorage(prefab, Main.config.storageWidth, Main.config.storageHeight, L10n.str(L10n.ids_hoverText), L10n.str(L10n.ids_storageLabel));
-#if GAME_SN // TODO fix for BZ
-			storageContainer.modelSizeRadius *= 3f;
-#endif
 			storageContainer.enabled = false; // disable until fully constructed
-
 
 			prefab.destroyChildren("LidLabel", "1st_person_model");
 
@@ -84,7 +80,6 @@ namespace FloatingCargoCrate
 			collider.size = new Vector3(2.47f, 0.89f, 3.0f);
 
 			prefab.GetComponent<SkyApplier>().renderers = new[] { model.GetComponentInChildren<Renderer>(), modelCargo.GetComponent<Renderer>() };
-
 
 			var constructable = PrefabUtils.initConstructable(prefab, model);
 			constructable.allowedOutside = true;

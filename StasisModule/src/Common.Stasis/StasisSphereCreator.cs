@@ -42,11 +42,11 @@ namespace Common.Stasis
 					yield return new WaitUntil(() => stasisSpherePrefab);
 					yield break;
 				}
-#if GAME_BZ
+#if BELOWZERO
 #pragma warning disable CS0612 // TechType.StasisRifle is obsolete in BZ
 #endif
 				var task = PrefabUtils.getPrefabAsync(TechType.StasisRifle);
-#if GAME_BZ
+#if BELOWZERO
 #pragma warning restore CS0612
 #endif
 				yield return task;

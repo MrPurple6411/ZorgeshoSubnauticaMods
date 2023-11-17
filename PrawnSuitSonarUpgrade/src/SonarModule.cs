@@ -9,11 +9,11 @@ namespace PrawnSuitSonarUpgrade
 
 		protected override TechInfo getTechInfo() => new
 		(
-#if GAME_SN
+#if SUBNAUTICA
 			new (TechType.SeamothSonarModule),
 			new (TechType.WiringKit),
 			new (TechType.ComputerChip)
-#elif GAME_BZ
+#elif BELOWZERO
 			new (TechType.CopperWire),
 			new (TechType.Magnetite, 2)
 #endif
@@ -24,11 +24,11 @@ namespace PrawnSuitSonarUpgrade
 		public override void patch()
 		{
 			TechType = register("Prawn suit sonar", Mod.Consts.isGameSN? "Seamoth sonar modified to use on prawn suit.": "Prawn suit sonar");
-#if GAME_SN
+#if SUBNAUTICA
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addCraftingNodeTo(CraftTree.Type.Workbench, "ExosuitMenu");
 			setTechTypeForUnlock(TechType.SeamothSonarModule);
-#elif GAME_BZ
+#elif BELOWZERO
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitJetUpgradeModule);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.ExosuitJetUpgradeModule);
 			unlockOnStart();

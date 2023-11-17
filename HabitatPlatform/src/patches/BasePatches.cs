@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HabitatPlatform
 {
 	// hiding foundations on the platform (part of the code copied from vanilla)
-	[HarmonyPatch(typeof(Base), "BuildFoundationGeometry")]
+	[HarmonyPatch(typeof(Base), nameof(Base.BuildFoundationGeometry))]
 	static class Base_BuildFoundationGeometry_Patch
 	{
 		static bool Prefix(Base __instance, Int3 cell)
@@ -26,8 +26,8 @@ namespace HabitatPlatform
 	}
 
 	// don't add pillars for anything builded on the platform (in case we build in shallow water)
-	[HarmonyPatch(typeof(BaseFoundationPiece), "OnGenerate")]
-	static class BaseFoundationPiece_OnGenerate_Patch
+	[HarmonyPatch(typeof(BaseFoundationPiece), "IBaseAccessoryGeometry.BuildGeometry")]
+	static class BaseFoundationPiece_IBaseAccessoryGeometry_BuildGeometry_Patch
 	{
 		static bool Prefix(BaseFoundationPiece __instance)
 		{

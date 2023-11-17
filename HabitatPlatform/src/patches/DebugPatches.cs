@@ -26,27 +26,27 @@ namespace HabitatPlatform
 			msg.logDbg();
 		}
 
-		[HarmonyPrefix, HarmonyPatch(typeof(Base), "OnProtoSerialize")]
+		[HarmonyPrefix, HarmonyPatch(typeof(Base), nameof(Base.OnProtoSerialize))]
 		static void Base_OnProtoSerialize_Prefix(Base __instance)
 		{
 			if (_platform(__instance, out var platform))
 				dumpTransform("Base.OnProtoSerialize: ", platform.transform);
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(Base), "OnProtoDeserialize")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Base), nameof(Base.OnProtoDeserialize))]
 		static void Base_OnProtoDeserialize_Postfix(Base __instance)
 		{
 			if (_platform(__instance, out var platform))
 				dumpTransform("Base.OnProtoDeserialize: ", platform.transform);
 		}
 
-		[HarmonyPrefix, HarmonyPatch(typeof(Player), "OnProtoSerialize")]
+		[HarmonyPrefix, HarmonyPatch(typeof(Player), nameof(Player.OnProtoSerialize))]
 		static void Player_OnProtoSerialize_Prefix(Player __instance)
 		{
 			dumpTransform("Player.OnProtoSerialize: ", __instance.transform);
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(Player), "OnProtoDeserialize")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Player), nameof(Player.OnProtoDeserialize))]
 		static void Player_OnProtoDeserialize_Postfix(Player __instance)
 		{
 			dumpTransform("Player.OnProtoDeserialize: ", __instance.transform);

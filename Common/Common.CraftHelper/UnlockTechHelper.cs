@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using HarmonyLib;
-using SMLHelper.V2.Handlers;
+using Nautilus.Handlers;
 
 namespace Common.Crafting
 {
@@ -54,7 +54,7 @@ namespace Common.Crafting
 		{
 			public static readonly HarmonyHelper.LazyPatcher patcher = new();
 
-			[HarmonyTranspiler, HarmonyPatch(typeof(PDAScanner), "Scan")]
+			[HarmonyTranspiler, HarmonyPatch(typeof(PDAScanner), nameof(PDAScanner.Scan))]
 			static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins)
 			{
 				static TechType _substTechType(TechType scanTechType) // substitute fragment tech type if it already known
@@ -71,7 +71,7 @@ namespace Common.Crafting
 					OpCodes.Stloc_0);
 			}
 
-			[HarmonyPrefix, HarmonyPatch(typeof(PDAScanner), "ContainsCompleteEntry")] // for loot spawning
+			[HarmonyPrefix, HarmonyPatch(typeof(PDAScanner), nameof(PDAScanner.ContainsCompleteEntry))] // for loot spawning
 			static bool fragmentCheckOverride(TechType techType, ref bool __result)
 			{
 				if (!fragments.TryGetValue(techType, out TechType substTechType))
@@ -82,7 +82,7 @@ namespace Common.Crafting
 			}
 
 			[HarmonyPriority(Priority.Low)]
-			[HarmonyPostfix, HarmonyHelper.Patch(typeof(KnownTech), "Initialize")]
+			[HarmonyPostfix, HarmonyHelper.Patch(typeof(KnownTech), nameof(KnownTech.Initialize))]
 			static void unlockPopupsUpdate()
 			{
 				KnownTech.AnalysisTech _getEntry(TechType techType) =>
@@ -108,7 +108,7 @@ namespace Common.Crafting
 		{
 			public static readonly HarmonyHelper.LazyPatcher patcher = new();
 
-			[HarmonyPostfix, HarmonyPatch(typeof(KnownTech), "Add")]
+			[HarmonyPostfix, HarmonyPatch(typeof(KnownTech), nameof(KnownTech.Add))]
 			static void KnownTech_Add_Postfix(TechType techType)
 			{
 				foreach (var tech in compoundTechs)

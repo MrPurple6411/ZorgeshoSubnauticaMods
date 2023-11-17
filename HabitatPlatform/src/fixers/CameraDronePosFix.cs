@@ -25,7 +25,7 @@ namespace HabitatPlatform
 			camera.transform.position = camera.dockingPoint.dockingTransform.position;
 		}
 
-		[HarmonyPatch(typeof(MapRoomCamera), "SetDocked")]
+		[HarmonyPatch(typeof(MapRoomCamera), nameof(MapRoomCamera.SetDocked))]
 		static class MapRoomCamera_SetDocked_Patch
 		{
 			static void Postfix(MapRoomCamera __instance, MapRoomCameraDocking dockingPoint)

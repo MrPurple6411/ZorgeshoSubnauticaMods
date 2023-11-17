@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Crafting;
-using SMLHelper.V2.Handlers;
+using Nautilus.Assets;
+using Nautilus.Crafting;
+using Nautilus.Handlers;
 
-#if GAME_SN
+#if SUBNAUTICA
 	using Sprite = Atlas.Sprite;
-#elif GAME_BZ
+#elif BELOWZERO
 	using Sprite = UnityEngine.Sprite;
 #endif
 
@@ -27,14 +27,23 @@ namespace Common.Crafting
 
 		public static bool block = false;
 
-		[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Assets.ModPrefab, SMLHelper", "ProcessPrefab")]
+		[HarmonyPrefix, HarmonyHelper.Patch("Nautilus.Assets.ModPrefab, SMLHelper", "ProcessPrefab")]
 		static bool blockPrefabProcessing() => !block || (block = false);
 	}
 
-	abstract class CraftableObject: ModPrefab
+	abstract class CraftableObject
 	{
+
+		public string ClassID { get; private set; }
+		public TechType TechType { get; private set; }
+
+		protected CustomPrefab CustomPrefab { get; private set; }
+
 		protected CraftableObject(): this(ReflectionHelper.getCallingDerivedType().Name) {}
-		protected CraftableObject(string classID): base(classID, classID + "_Prefab") {}
+
+		protected CraftableObject(string classID) {
+			ClassID = classID;
+		}
 
 		bool isUsingExactPrefab = false; // using result of getGameObject as prefab, without smlhelper additional stuff
 
@@ -45,12 +54,7 @@ namespace Common.Crafting
 
 		protected abstract TechInfo getTechInfo();
 
-		public sealed override GameObject GetGameObject()
-		{
-			PrefabProcessingBlocker.block = isUsingExactPrefab;
-			return getGameObject();
-		}
-		public sealed override IEnumerator GetGameObjectAsync(IOut<GameObject> result)
+		public IEnumerator GetGameObjectAsync(IOut<GameObject> result)
 		{
 			PrefabProcessingBlocker.block = isUsingExactPrefab;
 			return getGameObjectAsync(result);
@@ -58,10 +62,20 @@ namespace Common.Crafting
 
 		void registerPrefabAndTechInfo()
 		{
-			PrefabHandler.RegisterPrefab(this);
+			var info = new PrefabInfo(ClassID, ClassID + "_Prefab", this.TechType);
+			CustomPrefab = new(info);
+
+			GameObject prefab = getGameObject();
+
+			if (prefab != null)
+				CustomPrefab.SetGameObject(prefab);
+			else
+				CustomPrefab.SetGameObject(GetGameObjectAsync);
+			
+			CustomPrefab.Register();
 
 			if (getTechInfo() is TechInfo techInfo)
-				CraftDataHandler.SetTechData(TechType, techInfo);
+				CraftDataHandler.SetRecipeData(this.TechType, techInfo);
 		}
 
 		protected void useExactPrefab()
@@ -70,10 +84,9 @@ namespace Common.Crafting
 			PrefabProcessingBlocker.patcher.patch();
 		}
 
-
 		protected void register(TechType techType) // for already existing techtypes
 		{
-			TechType = techType;
+			this.TechType = techType;
 			registerPrefabAndTechInfo();
 		}
 
@@ -88,11 +101,11 @@ namespace Common.Crafting
 
 		protected TechType register(string name, string description, Sprite sprite)
 		{
-			TechType = TechTypeHandler.AddTechType(ClassID, name, description, sprite, false);
+			this.TechType = EnumHandler.AddEntry<TechType>(ClassID).WithPdaInfo(name, string.IsNullOrWhiteSpace(description)? name: description, "English", false).WithIcon(sprite);
 
 			registerPrefabAndTechInfo();
 
-			return TechType;
+			return this.TechType;
 		}
 
 		protected void useTextFrom(TechType nameFrom = TechType.None, TechType descriptionFrom = TechType.None)
@@ -118,7 +131,7 @@ namespace Common.Crafting
 		{
 			string fragTechID = ClassID + "_Fragment";
 
-			TechType substFragTechType = TechTypeHandler.AddTechType(fragTechID, "", "");
+			TechType substFragTechType = EnumHandler.AddEntry<TechType>(fragTechID);
 			LanguageHelper.substituteString(fragTechID, fragTechType.AsString()); // use name from original fragment
 
 			UnlockTechHelper.setFragmentTypeToUnlock(TechType, fragTechType, substFragTechType, fragCount, scanTime);
@@ -189,12 +202,7 @@ namespace Common.Crafting
 
 		GameObject preparePrefab(PrefabInfo info)
 		{
-#if BRANCH_EXP
 			return null;
-#elif BRANCH_STABLE
-			Debug.assert(info.filename != null);
-			return info.copy? PrefabUtils.getPrefabCopy(info.filename): PrefabUtils.getPrefab(info.filename);
-#endif
 		}
 
 		IEnumerator preparePrefabAsync(PrefabInfo info, IOut<GameObject> result)

@@ -221,7 +221,7 @@ namespace TrfHabitatBuilder
 		IEnumerator Start()
 		{
 			yield return init();
-			builderTool.UpdateText();
+			builderTool.UpdateCustomUseText();
 		}
 
 		void setBeamsActive(bool state)

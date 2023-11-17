@@ -11,7 +11,7 @@ namespace OxygenRefill
 	using Object = UnityEngine.Object;
 
 	// used in crafting
-	[HarmonyPatch(typeof(Inventory), "DestroyItem")]
+	[HarmonyPatch(typeof(Inventory), nameof(Inventory.DestroyItem))]
 	static class Inventory_DestroyItem_Patch
 	{
 		static bool Prefix(Inventory __instance, TechType destroyTechType)
@@ -34,7 +34,7 @@ namespace OxygenRefill
 	}
 
 	// used for counting ingredients for crafting
-	[HarmonyPatch(typeof(Inventory), "GetPickupCount")]
+	[HarmonyPatch(typeof(Inventory), nameof(Inventory.GetPickupCount))]
 	static class Inventory_GetPickupCount_Patch
 	{
 		static bool Prefix(Inventory __instance, TechType pickupType, ref int __result)

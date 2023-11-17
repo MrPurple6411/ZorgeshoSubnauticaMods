@@ -3,7 +3,7 @@
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
-using SMLHelper.V2.Utility;
+using Nautilus.Utility;
 
 using Common;
 using Common.Harmony;
@@ -38,7 +38,7 @@ namespace UITweaks
 		{
 			static bool prepare() => Main.config.renameBeacons;
 
-			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), "ItemActions")]
+			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), nameof(TooltipFactory.ItemActions))]
 			static void TooltipFactory_ItemActions_Postfix(StringBuilder sb, InventoryItem item)
 			{
 				if (item.item.GetTechType() != TechType.Beacon)
@@ -51,20 +51,20 @@ namespace UITweaks
 					renameBeacon(item.item.GetComponent<Beacon>());
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), "ItemCommons")]
+			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), nameof(TooltipFactory.ItemCommons))]
 			static void TooltipFactory_ItemCommons_Postfix(StringBuilder sb, TechType techType, GameObject obj)
 			{
 				if (techType == TechType.Beacon)
 					TooltipFactory.WriteDescription(sb, $"{L10n.str(L10n.ids_beaconName)}: \"{obj.GetComponent<Beacon>().label}\"");
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(Beacon), "OnPickedUp")]
+			[HarmonyPostfix, HarmonyPatch(typeof(Beacon), nameof(Beacon.OnPickedUp))]
 			static void Beacon_OnPickedUp_Postfix(Beacon __instance)
 			{
 				__instance.label = __instance.beaconLabel.GetLabel();
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_InventoryTab), "OnPointerClick")]
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_InventoryTab), nameof(uGUI_InventoryTab.OnPointerClick))]
 			static void uGUIInventoryTab_OnPointerClick_Postfix(InventoryItem item, int button)
 			{
 				if (Main.config.renameBeaconsKey == default && item.item.GetTechType() == TechType.Beacon && button == 2)

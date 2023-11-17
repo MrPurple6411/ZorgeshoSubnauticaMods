@@ -10,13 +10,16 @@ using Common;
 using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
+using UnityEngine.EventSystems;
 
-#if GAME_SN
+
+#if SUBNAUTICA
 using UnityEngine.EventSystems;
 #endif
 
 namespace CustomHotkeys
 {
+	using static VFXParticlesPool;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 
 	[OptionalPatch, PatchClass]
@@ -25,7 +28,7 @@ namespace CustomHotkeys
 		static bool prepare() => !Main.config.enableDevToolsHotkeys;
 
 		// disabling F1 and F3 hotkeys for dev tools
-		[HarmonyTranspiler, HarmonyPatch(typeof(MainGameController), "Update")]
+		[HarmonyTranspiler, HarmonyPatch(typeof(MainGameController), nameof(MainGameController.Update))]
 		static CIEnumerable F1_F3_disabler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
@@ -37,8 +40,8 @@ namespace CustomHotkeys
 		}
 
 		[HarmonyPrefix]
-		[HarmonyPatch(typeof(GUIController), "Update")] // disable F6 (hide gui tool)
-		[HarmonyPatch(typeof(MainMenuController), "Update")] // disable Shift+F5 (smoke test)
+		[HarmonyPatch(typeof(GUIController), nameof(GUIController.Update))] // disable F6 (hide gui tool)
+		[HarmonyPatch(typeof(MainMenuController), nameof(MainMenuController.Update))] // disable Shift+F5 (smoke test)
 		static bool hotkeyDisabler() => false;
 	}
 
@@ -57,18 +60,18 @@ namespace CustomHotkeys
 		}
 
 		// disable F8 (feedback collector)
-		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_FeedbackCollector), "Awake")]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_FeedbackCollector), nameof(uGUI_FeedbackCollector.Awake))]
 		static void uGUIFeedbackCollector_Awake_Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
 
 		// remove "Give Feedback" from the ingame menu
-		[HarmonyTranspiler, HarmonyPatch(typeof(IngameMenu), "Start")]
+		[HarmonyTranspiler, HarmonyPatch(typeof(IngameMenu), nameof(IngameMenu.Start))]
 		static CIEnumerable IngameMenu_Start_Transpiler(CIEnumerable cins) => CIHelper.ciRemove(cins, 0, 3);
 	}
 
 	// patches for removing bindings and blocking 'Up' event after binding
 	static class BindingPatches
 	{
-#if GAME_SN
+#if SUBNAUTICA
 		class BindCheckPointer: MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 		{
 			public static GameObject hoveredObject { get; private set; }
@@ -80,18 +83,18 @@ namespace CustomHotkeys
 		// allows to remove bindings from bind options without selecting them first
 		// it's enough to just move cursor over the option and press 'Delete'
 		// another part of the patch in the 'Update' patch
-		[HarmonyPatch(typeof(uGUI_Binding), "Start")]
+		[HarmonyPatch(typeof(UIBehaviour), "Start")]
 		static class uGUIBinding_Start_Patch
 		{
-			static bool Prepare() => Main.config.easyBindRemove;
+			static bool Prepare(UIBehaviour __instance) => Main.config.easyBindRemove && __instance is uGUI_Binding;
 
-			static void Postfix(uGUI_Binding __instance) =>
+			static void Postfix(UIBehaviour __instance) =>
 				__instance.gameObject.ensureComponent<BindCheckPointer>();
 		}
 #endif
 		static int lastBindedIndex = -1;
 
-		[HarmonyPatch(typeof(uGUI_Binding), "Update")]
+		[HarmonyPatch(typeof(uGUI_Binding), nameof(uGUI_Binding.Update))]
 		static class uGUIBinding_Update_Patch
 		{
 			static void saveLastBind() => lastBindedIndex = GameInput.lastInputPressed[0]; // for keyboard
@@ -102,23 +105,11 @@ namespace CustomHotkeys
 
 				// saving binded keycode to check later in GameInput.UpdateKeyInputs patch
 				list.ciInsert(new CIHelper.MemberMatch(nameof(GameInput.ClearInput)), CIHelper.emitCall<Action>(saveLastBind));
-#if GAME_SN
-				if (Main.config.easyBindRemove)
-				{
-					int index = list.FindIndex(new CIHelper.MemberMatch($"get_{nameof(EventSystem.current)}"));
-					Common.Debug.assert(index != -1);
-
-					var get_hoveredObject = typeof(BindCheckPointer).property(nameof(BindCheckPointer.hoveredObject)).GetGetMethod();
-					list.RemoveRange(index, 2);
-					list.Insert(index, new CodeInstruction(OpCodes.Call, get_hoveredObject));
-				}
-#endif
 				return list;
 			}
 		}
 
-#if GAME_BZ
-		[HarmonyPatch(typeof(uGUI_Binding), "RefreshValue")]
+		[HarmonyPatch(typeof(uGUI_Binding), nameof(uGUI_Binding.RefreshValue))]
 		static class uGUIBinding_RefreshValue_Patch
 		{
 			static bool Prefix(uGUI_Binding __instance)
@@ -131,24 +122,20 @@ namespace CustomHotkeys
 				return false;
 			}
 		}
-#endif
+
 		// if we press key while binding in options menu, ignore its 'Up' & 'Held' events
-		[HarmonyPatch(typeof(GameInput), Mod.Consts.isGameSNStable? "UpdateKeyInputs": "GetInputState")]
+		[HarmonyPatch(typeof(GameInput), nameof(GameInput.GetInputState))]
 		static class GameInput_UpdateKeyState_Patch
 		{
 			static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 			{
 				var list = cins.ToList();
 				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
-#if GAME_SN && BRANCH_STABLE
-				var cinsCompare = CIHelper.toCIList(OpCodes.Ldloc_S, 4,
-													OpCodes.Ldsfld, field_lastBindedIndex);
-#else
 				var cinsCompare = CIHelper.toCIList(OpCodes.Ldarg_1, CIHelper.emitCall<Func<KeyCode>>(_lastBindedKeyCode));
 
 				static KeyCode _lastBindedKeyCode() =>
 					lastBindedIndex == -1 || GameInput.inputs.Count == 0? default: GameInput.inputs[lastBindedIndex].keyCode;
-#endif
+
 				int[] i = list.ciFindIndexes(new CIHelper.MemberMatch("GetKey"),
 											 ci => ci.isOp(OpCodes.Call),
 											 ci => ci.isOp(OpCodes.Call));
@@ -174,7 +161,7 @@ namespace CustomHotkeys
 		}
 	}
 
-#if GAME_SN // doesn't needed for BZ
+#if SUBNAUTICA // doesn't needed for BZ
 	static class GameInput_AutoForward_Patch
 	{
 #pragma warning disable IDE0052
@@ -186,7 +173,7 @@ namespace CustomHotkeys
 		public static void setAutoForward(bool val) => autoforward = val;
 		public static void toggleAutoForward() => setAutoForward(!autoforward);
 
-		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), "GetMoveDirection")]
+		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), nameof(GameInput.GetMoveDirection))]
 		static void patchAutoForward(ref Vector3 __result)
 		{
 			if (autoforward)
@@ -195,8 +182,8 @@ namespace CustomHotkeys
 	}
 #endif
 
-#if GAME_BZ
-// some 'disable IDE0052' pragmas are considered unnecessary by VS for some reason
+#if BELOWZERO
+	// some 'disable IDE0052' pragmas are considered unnecessary by VS for some reason
 #pragma warning disable IDE0079 // unnecessary suppression
 
 	static class SeaTruckForcedExit
@@ -211,7 +198,7 @@ namespace CustomHotkeys
 				SeaTruckMotor_StopPiloting_ReversePatch(truck);
 		}
 
-		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckMotor), "StopPiloting")]
+		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckMotor), nameof(SeaTruckMotor.StopPiloting))]
 		static bool SeaTruckMotor_StopPiloting_ReversePatch(SeaTruckMotor truck)
 		{
 			_ = truck; _ = transpiler(null); // make compiler happy
@@ -253,7 +240,7 @@ namespace CustomHotkeys
 				SeaTruckSegment_OnClickDetachLever_ReversePatch(segment);
 		}
 
-		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckSegment), "OnClickDetachLever")]
+		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckSegment), nameof(SeaTruckSegment.OnClickDetachLever))]
 		static void SeaTruckSegment_OnClickDetachLever_ReversePatch(SeaTruckSegment segment)
 		{
 			_ = segment; _ = transpiler(null); // make compiler happy
@@ -289,7 +276,7 @@ namespace CustomHotkeys
 				SeaTruckConnection_OnTriggerEnter_ReversePatch(rearSegment.rearConnection, looseSegment.frontConnection);
 		}
 
-		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckConnection), "OnTriggerEnter")]
+		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckConnection), nameof(SeaTruckConnection.OnTriggerEnter))]
 		static void SeaTruckConnection_OnTriggerEnter_ReversePatch(SeaTruckConnection rearConnection, SeaTruckConnection frontConnection)
 		{
 			_ = rearConnection; _ = frontConnection; _ = transpiler(null); // make compiler happy
@@ -299,5 +286,5 @@ namespace CustomHotkeys
 		}
 	}
 #pragma warning restore IDE0079
-#endif // GAME_BZ
+#endif // BELOWZERO
 }

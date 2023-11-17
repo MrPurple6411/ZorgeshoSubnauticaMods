@@ -1,4 +1,4 @@
-﻿#if GAME_BZ
+﻿#if BELOWZERO
 using HarmonyLib;
 using UnityEngine;
 
@@ -48,4 +48,4 @@ namespace MiscObjects
 		}
 	}
 }
-#endif // GAME_BZ
+#endif // BELOWZERO

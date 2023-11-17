@@ -3,7 +3,7 @@ using Common;
 
 namespace PrawnSuitSonarUpgrade
 {
-	[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleChange")]
+	[HarmonyPatch(typeof(Vehicle), nameof(Vehicle.OnUpgradeModuleChange))]
 	static class Vehicle_OnUpgradeModuleChange_Patch
 	{
 		static void Postfix(Vehicle __instance, TechType techType, bool added)
@@ -20,7 +20,7 @@ namespace PrawnSuitSonarUpgrade
 		}
 	}
 
-	[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleToggle")]
+	[HarmonyPatch(typeof(Vehicle), nameof(Vehicle.OnUpgradeModuleToggle))]
 	static class Vehicle_OnUpgradeModuleToggle_Patch
 	{
 		static void Postfix(Vehicle __instance, int slotID, bool active)
@@ -30,13 +30,13 @@ namespace PrawnSuitSonarUpgrade
 		}
 	}
 
-	[HarmonyPatch(typeof(Exosuit), "OnPilotModeBegin")]
+	[HarmonyPatch(typeof(Exosuit), nameof(Exosuit.OnPilotModeBegin))]
 	static class Exosuit_OnPilotModeBegin_Patch
 	{
 		static void Postfix(Exosuit __instance) => __instance.GetComponent<PrawnSonarControl>()?.setPlayerInside(true);
 	}
 
-	[HarmonyPatch(typeof(Exosuit), "OnPilotModeEnd")]
+	[HarmonyPatch(typeof(Exosuit), nameof(Exosuit.OnPilotModeEnd))]
 	static class Exosuit_OnPilotModeEnd_Patch
 	{
 		static void Postfix(Exosuit __instance) => __instance.GetComponent<PrawnSonarControl>()?.setPlayerInside(false);

@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 namespace Common.Configuration
 {
+	using Nautilus.Options;
 	using Reflection;
 
 	partial class Options
@@ -34,7 +35,7 @@ namespace Common.Configuration
 			public override void addOption(Options options)
 			{
 				// HACK: SMLHelper don't have button options yet, so we add toggle and then change it to button in onGameObjectChange
-				options.AddToggleOption(id, "", false);
+				options.AddItem(ModToggleOption.Create(id, "", false));
 			}
 
 			public override void onValueChange(EventArgs e) {}

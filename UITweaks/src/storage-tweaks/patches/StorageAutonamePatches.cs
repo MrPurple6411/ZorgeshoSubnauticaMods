@@ -20,7 +20,7 @@ namespace UITweaks.StorageTweaks
 
 			static string prevLabel = null;
 
-			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_SignInput), "OnSelect")]
+			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_SignInput), nameof(uGUI_SignInput.OnSelect))]
 			static void uGUISignInput_OnSelect_Prefix(uGUI_SignInput __instance)
 			{
 				prevLabel = __instance.text;
@@ -28,7 +28,7 @@ namespace UITweaks.StorageTweaks
 
 			// don't autoname storage with manually changed label
 			// autoname storage again if label changed to empty string
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_SignInput), "OnDeselect")]
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_SignInput), nameof(uGUI_SignInput.OnDeselect))]
 			static void uGUISignInput_OnDeselect_Postfix(uGUI_SignInput __instance)
 			{
 				if (prevLabel == __instance.text)

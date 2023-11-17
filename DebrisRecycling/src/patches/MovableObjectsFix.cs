@@ -29,10 +29,10 @@ namespace DebrisRecycling
 			go.GetComponent<ResourceTracker>()?.StartUpdatePosition();
 		}
 
-		[HarmonyPrefix, HarmonyPatch(typeof(PropulsionCannon), "GrabObject")]
+		[HarmonyPrefix, HarmonyPatch(typeof(PropulsionCannon), nameof(PropulsionCannon.GrabObject))]
 		static void PropulsionCannon_GrabObject_Prefix(GameObject target) => fixObject(target);
 
-		[HarmonyPrefix, HarmonyPatch(typeof(RepulsionCannon), "ShootObject")]
+		[HarmonyPrefix, HarmonyPatch(typeof(RepulsionCannon), nameof(RepulsionCannon.ShootObject))]
 		static void RepulsionCannon_ShootObject_Prefix(Rigidbody rb) => fixObject(rb.gameObject);
 	}
 }

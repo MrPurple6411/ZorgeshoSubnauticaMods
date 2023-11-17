@@ -13,7 +13,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	using static CIHelper;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 
-	[HarmonyPatch(typeof(ExosuitGrapplingArm), "Start")]
+	[HarmonyPatch(typeof(ExosuitGrapplingArm), nameof(ExosuitGrapplingArm.Start))]
 	static class ExosuitGrapplingArm_Start_Patch
 	{
 		static void Postfix(ExosuitGrapplingArm __instance)
@@ -26,7 +26,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 		}
 	}
 
-	[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
+	[HarmonyPatch(typeof(Exosuit), nameof(Exosuit.OnUpgradeModuleChange))]
 	static class Exosuit_OnUpgradeModuleChange_Patch
 	{
 		static bool Prefix(Exosuit __instance, TechType techType)
@@ -39,7 +39,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 		}
 	}
 
-	[HarmonyPatch(typeof(Exosuit), "SpawnArm")]
+	[HarmonyPatch(typeof(Exosuit), nameof(Exosuit.SpawnArm))]
 	static class Exosuit_SpawnArm_Patch
 	{
 		static bool Prefix(Exosuit __instance, TechType techType, Transform parent, ref IExosuitArm __result)
@@ -55,7 +55,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	}
 
 	// fix for vanilla bug (left arm's hook orientation in the attached state)
-	[HarmonyPatch(typeof(GrapplingHook), "OnCollisionEnter")]
+	[HarmonyPatch(typeof(GrapplingHook), nameof(GrapplingHook.OnCollisionEnter))]
 	static class GrapplingHook_OnCollisionEnter_Patch
 	{
 		static float getAngle(GrapplingHook hook) => Math.Sign(hook.transform.localScale.x) * -90f;
@@ -65,7 +65,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	}
 
 	// patching hook max distance, force & acceleration
-	[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
+	[HarmonyPatch(typeof(ExosuitGrapplingArm), nameof(ExosuitGrapplingArm.FixedUpdate))]
 	static class ExosuitGrapplingArm_FixedUpdate_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
@@ -83,7 +83,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	}
 
 	// patching hook speed
-	[HarmonyPatch(typeof(ExosuitGrapplingArm), "OnHit")]
+	[HarmonyPatch(typeof(ExosuitGrapplingArm), nameof(ExosuitGrapplingArm.OnHit))]
 	static class ExosuitGrapplingArm_OnHit_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)

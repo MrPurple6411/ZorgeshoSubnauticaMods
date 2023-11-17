@@ -8,7 +8,7 @@ using Common.Harmony;
 
 namespace RemoteTorpedoDetonator
 {
-	[OptionalPatch, HarmonyPatch(typeof(SeamothTorpedo), "Awake")]
+	[OptionalPatch, HarmonyPatch(typeof(SeamothTorpedo), nameof(SeamothTorpedo.Awake))]
 	static class SeamothTorpedo_Awake_Patch
 	{
 		static bool Prepare() => Main.config.torpedoSpeed != 10f || !Main.config.homingTorpedoes; // non-default values, need to patch
@@ -20,7 +20,7 @@ namespace RemoteTorpedoDetonator
 		}
 	}
 
-	[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleChange")]
+	[HarmonyPatch(typeof(Vehicle), nameof(Vehicle.OnUpgradeModuleChange))]
 	static class Vehicle_OnUpgradeModuleChange_Patch
 	{
 		static void Postfix(Vehicle __instance, TechType techType)
@@ -34,15 +34,15 @@ namespace RemoteTorpedoDetonator
 	static class Vehicle_OnUpgradeModuleUse_Patch
 	{
 		[HarmonyPostfix]
-#if GAME_SN
-		[HarmonyPatch(typeof(SeaMoth), "OnUpgradeModuleUse")]
+#if SUBNAUTICA
+		[HarmonyPatch(typeof(SeaMoth), nameof(SeaMoth.OnUpgradeModuleUse))]
 #endif
-		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
+		[HarmonyPatch(typeof(Vehicle), nameof(Vehicle.OnUpgradeModuleUse))]
 		static void OnUpgradeModuleUse_Postfix(Vehicle __instance, TechType techType, int slotID)
 		{
 			if (techType == TorpedoDetonatorModule.TechType)
 				__instance.gameObject.GetComponent<TorpedoDetonatorControl>()?.detonateTorpedoes();
-#if GAME_SN
+#if SUBNAUTICA
 			if (techType == TechType.SeamothTorpedoModule && __instance.quickSlotCooldown[slotID] > Main.config.torpedoCooldown)
 				__instance.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
 #endif
@@ -50,7 +50,7 @@ namespace RemoteTorpedoDetonator
 	}
 
 	// infinite torpedoes cheat
-	[OptionalPatch, HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
+	[OptionalPatch, HarmonyPatch(typeof(Vehicle), nameof(Vehicle.TorpedoShot))]
 	static class Vehicle_TorpedoShot_Patch
 	{
 		static bool Prepare() => Main.config.cheatInfiniteTorpedoes;

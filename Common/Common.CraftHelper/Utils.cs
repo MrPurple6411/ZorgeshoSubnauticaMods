@@ -3,7 +3,7 @@ using System.Collections;
 
 using UWE;
 using UnityEngine;
-using SMLHelper.V2.Assets;
+using Nautilus.Assets;
 
 #if BRANCH_STABLE
 using System.IO;
@@ -32,21 +32,15 @@ namespace Common.Crafting
 		// BRANCH_EXP TODO: remove for SN after async update
 		#region sync 'getPrefab' methods
 		public static GameObject getPrefab(TechType techType)
-		{																												$"PrefabUtils: getPrefab(TechType.{techType})".logDbg();
-#if GAME_SN && BRANCH_STABLE
-			return CraftData.GetPrefabForTechType(techType);
-#else
+		{																												
+			$"PrefabUtils: getPrefab(TechType.{techType})".logDbg();
 			return null;
-#endif
 		}
 
 		public static GameObject getPrefab(string filename)
-		{																												$"PrefabUtils: getPrefab(\"{filename}\")".logDbg();
-#if GAME_SN && BRANCH_STABLE
-			return Resources.Load<GameObject>(filename);
-#else
+		{																												
+			$"PrefabUtils: getPrefab(\"{filename}\")".logDbg();
 			return null;
-#endif
 		}
 
 		public static GameObject storePrefabCopy(GameObject prefab)
@@ -66,20 +60,15 @@ namespace Common.Crafting
 			return _instantiate(getPrefab(techType), options);
 		}
 
-		public static GameObject getPrefabCopy(string filename, CopyOptions options = CopyOptions.Default)
-		{																												$"PrefabUtils: getPrefabCopy(\"{filename}\")".logDbg();
-			return _instantiate(getPrefab(filename), options);
-		}
 		#endregion
-
 
 		#region async 'getPrefab' methods
 
-#if GAME_SN && BRANCH_STABLE // to avoid warnings :(
+#if SUBNAUTICA && BRANCH_STABLE // to avoid warnings :(
 #pragma warning disable CS0618 // marked obsolete in stable branch
 #endif
 		static IPrefabRequest _getPrefabForFilenameAsync(string filename) => PrefabDatabase.GetPrefabForFilenameAsync(filename);
-#if GAME_SN && BRANCH_STABLE
+#if SUBNAUTICA && BRANCH_STABLE
 #pragma warning restore CS0618
 #endif
 
@@ -143,9 +132,8 @@ namespace Common.Crafting
 		static GameObject _instantiate(GameObject gameObject, CopyOptions options)
 		{
 			if (options.HasFlag(CopyOptions.UseCache))
-				return ModPrefabCache.AddPrefabCopy(gameObject, options.HasFlag(CopyOptions.AutoRemove));
-			else
-				return Object.Instantiate(gameObject);
+				ModPrefabCache.AddPrefab(gameObject);
+			return Object.Instantiate(gameObject);
 		}
 		#endregion
 

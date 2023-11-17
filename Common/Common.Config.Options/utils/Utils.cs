@@ -3,7 +3,7 @@ using System.Collections;
 
 using HarmonyLib;
 using UnityEngine;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
 
 namespace Common.Configuration
 {
@@ -89,7 +89,7 @@ namespace Common.Configuration
 					_setSpacing(spacing);
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), nameof(uGUI_TabbedControlsPanel.SetVisibleTab))]
 			static void uGUITabbedControlsPanel_SetVisibleTab_Postfix(int tabIndex)
 			{
 				if (tabIndex == modsTabIndex)

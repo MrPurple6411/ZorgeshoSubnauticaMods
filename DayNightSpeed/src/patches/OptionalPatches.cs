@@ -12,7 +12,7 @@ namespace DayNightSpeed
 	using static CIHelper;
 
 	// modifying egg hatching time
-	[OptionalPatch, HarmonyPatch(typeof(CreatureEgg), "GetHatchDuration")]
+	[OptionalPatch, HarmonyPatch(typeof(CreatureEgg), nameof(CreatureEgg.GetHatchDuration))]
 	static class CreatureEgg_GetHatchDuration_Patch
 	{
 		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedEggsHatching != 1.0f;
@@ -28,8 +28,8 @@ namespace DayNightSpeed
 		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedCreaturesGrow != 1.0f;
 
 		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
-		[HarmonyPatch(typeof(WaterParkCreature), Mod.Consts.isGameSN? "Update": "ManagedUpdate")]
+		[HarmonyPatch(typeof(WaterParkCreature), nameof(WaterParkCreature.SetMatureTime))]
+		[HarmonyPatch(typeof(WaterParkCreature), nameof(WaterParkCreature.ManagedUpdate))]
 		static CIEnumerable WaterParkCreature_Transpiler(CIEnumerable cins)
 		{
 			string growingPeriod = $"{(Mod.Consts.isGameSN? "": "get_")}growingPeriod";
@@ -43,11 +43,11 @@ namespace DayNightSpeed
 	{
 		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedPlantsGrow != 1.0f;
 
-		[HarmonyTranspiler, HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
+		[HarmonyTranspiler, HarmonyPatch(typeof(GrowingPlant), nameof(GrowingPlant.GetGrowthDuration))]
 		static CIEnumerable GrowingPlant_GetGrowthDuration_Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedPlantsGrow)), OpCodes.Div);
 
-		[HarmonyPrefix, HarmonyPatch(typeof(FruitPlant), "Initialize")]
+		[HarmonyPrefix, HarmonyPatch(typeof(FruitPlant), nameof(FruitPlant.Initialize))]
 		static void FruitPlant_Initialize_Prefix(FruitPlant __instance) // don't want to use another transpilers here
 		{
 			if (!__instance.initialized)
@@ -62,8 +62,8 @@ namespace DayNightSpeed
 		static bool prepare() => Main.config.speedFoodDecay != 1.0f;
 
 		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(Eatable), "GetFoodValue")]
-		[HarmonyPatch(typeof(Eatable), "GetWaterValue")]
+		[HarmonyPatch(typeof(Eatable), nameof(Eatable.GetFoodValue))]
+		[HarmonyPatch(typeof(Eatable), nameof(Eatable.GetWaterValue))]
 		static CIEnumerable Eatable_GetFoodWaterValue_Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isOp(OpCodes.Mul), _codeForCfgVar(nameof(ModConfig.speedFoodDecay)), OpCodes.Mul);
 	}
@@ -75,16 +75,16 @@ namespace DayNightSpeed
 		static bool prepare() => Main.config.speedFiltrationMachine != 1.0f;
 
 		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(FiltrationMachine), "OnHover")] // fix on hover info
-		[HarmonyPatch(typeof(FiltrationMachine), "TryFilterSalt")]
-		[HarmonyPatch(typeof(FiltrationMachine), "TryFilterWater")]
+		[HarmonyPatch(typeof(FiltrationMachine), nameof(FiltrationMachine.OnHover))] // fix on hover info
+		[HarmonyPatch(typeof(FiltrationMachine), nameof(FiltrationMachine.TryFilterSalt))]
+		[HarmonyPatch(typeof(FiltrationMachine), nameof(FiltrationMachine.TryFilterWater))]
 		static CIEnumerable FiltrationMachine_Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isLDC(420f) || ci.isLDC(840f), +1, 0, _codeForCfgVar(nameof(ModConfig.speedFiltrationMachine)), OpCodes.Div);
 	}
 
-#if GAME_SN
+#if SUBNAUTICA
 	// modifying medkit autocraft time
-	[OptionalPatch, HarmonyPatch(typeof(MedicalCabinet), "Start")]
+	[OptionalPatch, HarmonyPatch(typeof(MedicalCabinet), nameof(MedicalCabinet.Start))]
 	static class MedicalCabinet_Start_Patch
 	{
 		static float medKitSpawnInterval = 0f;
@@ -107,21 +107,21 @@ namespace DayNightSpeed
 	{
 		static bool prepare() => Main.config.dbgCfg.enabled;
 
-		[HarmonyPrefix, HarmonyPatch(typeof(Bed), "GetCanSleep")]
+		[HarmonyPrefix, HarmonyPatch(typeof(Bed), nameof(Bed.GetCanSleep))]
 		static bool Bed_GetCanSleep_Prefix(ref bool __result)
 		{
 			__result = true;
 			return false;
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(ToggleLights), "UpdateLightEnergy")]
+		[HarmonyPostfix, HarmonyPatch(typeof(ToggleLights), nameof(ToggleLights.UpdateLightEnergy))]
 		static void ToggleLights_UpdateLightEnergy_Postfix(ToggleLights __instance)
 		{
 			if (Main.config.dbgCfg.showToggleLightStats)
 				$"{__instance.energyMixin?.charge} {__instance.energyPerSecond}".onScreen($"energy {__instance.name}");
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(WaterParkCreature), Mod.Consts.isGameSN? "Update": "ManagedUpdate")]
+		[HarmonyPostfix, HarmonyPatch(typeof(WaterParkCreature), Mod.Consts.isGameSN? "Update": "ManagedUpdate))]
 		static void WaterParkCreature_Update_Postfix(WaterParkCreature __instance)
 		{
 			if (Main.config.dbgCfg.showWaterParkCreatures)
@@ -131,17 +131,17 @@ namespace DayNightSpeed
 			}
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(CreatureEgg), "UpdateProgress")]
+		[HarmonyPostfix, HarmonyPatch(typeof(CreatureEgg), nameof(CreatureEgg.UpdateProgress))]
 		static void CreatureEgg_UpdateProgress_Postfix(CreatureEgg __instance)
 		{
 			if (Main.config.dbgCfg.showWaterParkCreatures)
 				$"progress: {__instance.progress}".onScreen($"waterpark {__instance.name} {__instance.GetHashCode()}");
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(Story.StoryGoalScheduler), "Schedule")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Story.StoryGoalScheduler), nameof(Story.StoryGoalScheduler.Schedule))]
 		static void StoryGoalScheduler_Schedule_Postfix(Story.StoryGoal goal) => $"goal added: {goal.key} {goal.delay} {goal.goalType}".logDbg();
 
-		[HarmonyPostfix, HarmonyPatch(typeof(Story.StoryGoal), "Execute")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Story.StoryGoal), nameof(Story.StoryGoal.Execute))]
 		static void StoryGoal_Execute_Postfix(string key, GoalType goalType) => $"goal removed: {key} {goalType}".logDbg();
 	}
 #endif

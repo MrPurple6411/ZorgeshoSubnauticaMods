@@ -4,8 +4,9 @@ using System.Linq;
 using Common;
 using Common.Crafting;
 using Common.Reflection;
+using TMPro;
 
-#if GAME_SN
+#if SUBNAUTICA
 using UnityEngine;
 using UnityEngine.UI;
 #endif
@@ -14,8 +15,8 @@ namespace UITweaks
 {
 	static partial class BulkCraftingTooltip
 	{
-#if GAME_SN
-		static Text text;
+#if SUBNAUTICA
+		static TextMeshProUGUI text;
 		static float textPosX;
 #endif
 		static TechType currentTechType;
@@ -40,31 +41,6 @@ namespace UITweaks
 		};
 
 		enum AmountActionHint { None = 0, Increase = 1, Decrease = 2, Both = 3 } // used as index for actions array
-#if GAME_SN
-		class BulkCraftingInitedTag: MonoBehaviour {}
-
-		static void init(uGUI_Tooltip tooltip)
-		{
-			if (!tooltip || tooltip.GetComponent<BulkCraftingInitedTag>())
-				return;
-
-			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
-
-			var textGO = tooltip.gameObject.getChild(Mod.Consts.isBranchStable? "Text": "Container/Text");
-			var textGOBottom = textGO.getParent().createChild(textGO, "BottomText");
-
-			var sizeFitter = textGOBottom.AddComponent<ContentSizeFitter>();
-			sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-			sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-			text = textGOBottom.GetComponent<Text>();
-			text.horizontalOverflow = HorizontalWrapMode.Overflow;
-			text.verticalOverflow = VerticalWrapMode.Truncate;
-			textPosX = text.rectTransform.localPosition.x;
-
-			text.text = _writeAction("tmp"); // adding temporary text to update rect size
-		}
-#endif // GAME_SN
 		static void init(TechType techType)
 		{
 			currentCraftAmount = 0;
@@ -121,20 +97,8 @@ namespace UITweaks
 			else												  return AmountActionHint.Both;
 		}
 
-#if GAME_SN
-		static void setActionText(AmountActionHint hintType)
-		{
-			if (!text)
-				return;
-
-			text.text = actions[(int)hintType];
-			text.gameObject.SetActive(hintType != AmountActionHint.None);
-		}
-
-		static void updateActionHint() => setActionText(getActionHint());
-#elif GAME_BZ
 		static string getActionText() => actions[(int)getActionHint()];
-#endif
+
 		static void changeAmount(int delta)
 		{
 			if (delta == 0 || currentCraftAmount == 0)

@@ -6,14 +6,14 @@ using Common;
 namespace OxygenRefill
 {
 	// add oxygen only to player
-	[HarmonyPatch(typeof(Oxygen), "AddOxygen")]
+	[HarmonyPatch(typeof(Oxygen), nameof(Oxygen.AddOxygen))]
 	static class Oxygen_AddOxygen_Patch
 	{
 		static bool Prefix(Oxygen __instance) => __instance.isPlayer;
 	}
 
 	// setting correct oxygen tank capacity after loading
-	[HarmonyPatch(typeof(Oxygen), "Awake")]
+	[HarmonyPatch(typeof(Oxygen), nameof(Oxygen.Awake))]
 	static class Oxygen_Awake_Patch
 	{
 		static void Prefix(Oxygen __instance)
@@ -26,7 +26,7 @@ namespace OxygenRefill
 	}
 
 	// prevents registering oxygen source when picking up items
-	[HarmonyPatch(typeof(Inventory), "TryUpdateOxygen")]
+	[HarmonyPatch(typeof(Inventory), nameof(Inventory.TryUpdateOxygen))]
 	static class Inventory_TryUpdateOxygen_Patch
 	{
 		static bool Prefix() => false;
@@ -34,7 +34,7 @@ namespace OxygenRefill
 
 	// consume energy for oxygen production while player in the vehicle
 	// don't replentish oxygen for player here, because it replentishes elsewhere anyway (CanBreathe)
-	[HarmonyPatch(typeof(Vehicle), "ReplenishOxygen")]
+	[HarmonyPatch(typeof(Vehicle), nameof(Vehicle.ReplenishOxygen))]
 	static class Vehicle_ReplenishOxygen_Patch
 	{
 		static bool Prefix(Vehicle __instance)

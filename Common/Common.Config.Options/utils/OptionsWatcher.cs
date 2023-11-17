@@ -58,13 +58,13 @@ namespace Common.Configuration.Utils
 			optionsActive = UnityEngine.Object.FindObjectOfType<uGUI_OptionsPanel>()?.isActiveAndEnabled ?? false;
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_OptionsPanel), "OnEnable")]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_OptionsPanel), nameof(uGUI_OptionsPanel.OnEnable))]
 		static void onPanelEnable()
 		{														"uGUI_OptionsPanel enabled".logDbg();
 			optionsActive = true;
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_OptionsPanel), "OnDisable")]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_OptionsPanel), nameof(uGUI_OptionsPanel.OnDisable))]
 		static void onPanelDisable()
 		{														"uGUI_OptionsPanel disabled".logDbg();
 			optionsActive = false;

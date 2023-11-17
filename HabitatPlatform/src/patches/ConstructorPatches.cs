@@ -11,7 +11,7 @@ using Common.Reflection;
 namespace HabitatPlatform
 {
 	// same spawn point as for RocketBase
-	[HarmonyPatch(typeof(Constructor), "GetItemSpawnPoint")]
+	[HarmonyPatch(typeof(Constructor), nameof(Constructor.GetItemSpawnPoint))]
 	static class Constructor_GetItemSpawnPoint_Patch
 	{
 		static bool Prefix(Constructor __instance, TechType techType, ref Transform __result)
@@ -25,7 +25,7 @@ namespace HabitatPlatform
 	}
 
 	// set construction duration for habitat platform same as for rocket platform (25 sec)
-	[HarmonyPatch(typeof(ConstructorInput), "Craft")]
+	[HarmonyPatch(typeof(ConstructorInput), nameof(ConstructorInput.Craft))]
 	static class ConstructorInput_Craft_Patch
 	{
 #if DEBUG

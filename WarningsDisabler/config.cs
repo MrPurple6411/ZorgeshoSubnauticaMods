@@ -118,7 +118,7 @@ namespace WarningsDisabler
 
 #pragma warning disable IDE0052 // field is never read
 
-#if GAME_BZ
+#if BELOWZERO
 		[AddMessages("Hypothermia warning")]
 		readonly Messages hypothermiaWarning = new
 		(
@@ -156,12 +156,12 @@ namespace WarningsDisabler
 		[AddMessages("Welcome messages")]
 		readonly Messages welcomeMessages = new
 		(
-#if GAME_SN
+#if SUBNAUTICA
 			"CyclopsWelcomeAboard",				// "CYCLOPS: Welcome aboard captain. All systems online."
 			"CyclopsWelcomeAboardAttention",	// "CYCLOPS: Welcome aboard captain. Some systems require attention."
 			"SeamothWelcomeAboard",				// "Seamoth: Welcome aboard captain."
 			"SeamothWelcomeNoPower",			// "Seamoth: Warning: Emergency power only. Oxygen production offline."
-#elif GAME_BZ
+#elif BELOWZERO
 			"SeatruckWelcomeAboard",			// "Welcome aboard captain."
 #endif
 			"ExosuitWelcomeAboard",				// "PRAWN: Welcome aboard captain."
@@ -170,13 +170,13 @@ namespace WarningsDisabler
 			//"BaseWelcomeNoPower"				//  Moved to powerWarnings list
 		);
 
-#if GAME_SN
+#if SUBNAUTICA
 		[AddMessages("Stillsuit equip message")]
 		readonly Messages stillsuitMessage = new
 		(
 			"StillsuitEquipped"
 		);
-#elif GAME_BZ
+#elif BELOWZERO
 		[Options.Field("Startup disclaimer", "Show disclaimer on startup")]
 		public readonly bool showDisclaimer = true;
 #endif

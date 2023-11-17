@@ -49,7 +49,7 @@ namespace DayNightSpeed
 			void Update()
 			{
 				slHelper.update();
-#if GAME_BZ
+#if BELOWZERO
 				cleanUpGoals();
 #endif
 #if DEBUG
@@ -58,7 +58,7 @@ namespace DayNightSpeed
 #endif
 			}
 
-#if GAME_BZ // in BZ, goals often ignoring 'timeExecute', so we need to remove them here
+#if BELOWZERO // in BZ, goals often ignoring 'timeExecute', so we need to remove them here
 			void cleanUpGoals()
 			{
 				if (!StoryGoalScheduler.main || !DayNightCycle.main)
@@ -89,14 +89,14 @@ namespace DayNightSpeed
 			static bool shouldIgnoreGoal(StoryGoal goal) =>
 				goal == null || goal.key.isNullOrEmpty() || goal.delay == 0f || goal.delay > shortGoalDelay;
 
-#if GAME_BZ
+#if BELOWZERO
 			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoalScheduler), "IProtoEventListener.OnProtoDeserialize")]
 			static void onInitScheduler()
 			{																			$"StoryGoalsListener: StoryGoalScheduler inited, goals scheduled: {StoryGoalScheduler.main.schedule.Count}".logDbg();
 				instance.goals.RemoveAll(goal => !StoryGoalScheduler.main.IsGoalScheduled(goal));
 			}
 #endif
-			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoalScheduler), "Schedule")]
+			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoalScheduler), nameof(StoryGoalScheduler.Schedule))]
 			static void onAddGoal(StoryGoalScheduler __instance, StoryGoal goal)
 			{
 #if DEBUG
@@ -105,7 +105,7 @@ namespace DayNightSpeed
 					return;
 				}
 #endif
-#if GAME_BZ
+#if BELOWZERO
 				if (!__instance.IsGoalScheduled(goal.key))
 				{																		$"StoryGoalsListener: goal '{goal.key}' is not actually added!".logDbg();
 					return;
@@ -118,7 +118,7 @@ namespace DayNightSpeed
 				instance.goals.Add(goal.key);											$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoal), "Execute")]
+			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoal), nameof(StoryGoal.Execute))]
 			static void onRemoveGoal(string key)
 			{
 				instance.goals.RemoveAll(g => g == key);
